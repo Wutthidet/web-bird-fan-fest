@@ -1,0 +1,848 @@
+<div class="seat-booking">
+  <div class="container">
+    <h1 class="title">ระบบจองที่นั่ง - Bird Fan Festival 20XX</h1>
+
+    <div class="main-layout">
+      <div class="map-container">
+        <div class="svg-wrapper">
+          <svg #svgMap width="1200" height="1400" viewBox="430 400 1070 350">
+            <path class="background-shape"
+              d="M860 210.5H744V575L913.5 477C899.5 441 929 418.667 945.5 412V232.5L860 210.5Z"
+              stroke="black" />
+            <path class="background-shape"
+              d="M1051.5 208.5L971 230L972.5 412C1011.7 424.8 1010.83 460.333 1005.5 476.5L1172.5 574V208.5H1051.5Z"
+              stroke="black" />
+            <path class="background-shape"
+              d="M996.5 493C969.3 522.2 934.5 505.167 920.5 493L743.5 595.5V618.5L790.5 695.5L868.5 740.5H1049L1127.5 693.5L1171.5 618.5V595.5L996.5 493Z"
+              stroke="black" />
+            <path class="background-shape"
+              d="M693 171H727L723.5 620L778.5 709L862 757H1055L1140.5 706L1193.5 621V171H1224V47H693V171Z"
+              stroke="black" />
+
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'B'" data-zone="B"
+              d="M482.5 292V283L630.5 236V265H621V274H560.5V292H482.5Z"
+              stroke="black" (click)="onZoneClick('B')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'C'" data-zone="C"
+              d="M571 305.5H475V414.5H570V395L630 394V325H571V305.5Z"
+              stroke="black" (click)="onZoneClick('C')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'D'" data-zone="D"
+              d="M571 429H475V538H570V518.5L630 517.5V448.5H571V429Z"
+              stroke="black" (click)="onZoneClick('D')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'E'" data-zone="E"
+              d="M566.5 554H475L477 681L629.5 640.5V575H566.5V554Z"
+              stroke="black" (click)="onZoneClick('E')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'F'" data-zone="F"
+              d="M494.5 688.5L467 699.5L464 732L505.5 799L607 741L583 699.5C600.667 690.167 636 671.1 636 669.5C636 667.9 628.333 659.5 624.5 655.5L528.5 682L494.5 688.5Z"
+              stroke="black" (click)="onZoneClick('F')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'G'" data-zone="G"
+              d="M614.5 755L519.5 810L575.5 905L698.5 778L689.5 764L641 798.5L614.5 755Z"
+              stroke="black"
+              (click)="onZoneClick('G')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'H'" data-zone="H"
+              d="M708 791L578.5 923L677 979L735 876.5L689.5 850.5L725 799.5L708 791Z"
+              stroke="black"
+              (click)="onZoneClick('H')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'I'" data-zone="I"
+              d="M744.5 882L684 985.5L764.5 1033H783.5L829.5 863L815.5 854L788.5 907L744.5 882Z"
+              stroke="black"
+              (click)="onZoneClick('I')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'J'" data-zone="J"
+              d="M859 866.5H843.5L801 1033H874V1014.5H854.5V1001H912.5V910.5H859V866.5Z"
+              stroke="black"
+              (click)="onZoneClick('J')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'K'" data-zone="K"
+              d="M985.5 866.5H931V1000.5H923.5V1032H994.5V1000.5H985.5V866.5Z"
+              stroke="black"
+              (click)="onZoneClick('K')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'L'" data-zone="L"
+              d="M1058.5 909.5H1004V1002H1065V1016H1045V1032H1118.5L1074.5 866H1058.5V909.5Z"
+              stroke="black"
+              (click)="onZoneClick('L')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'M'" data-zone="M"
+              d="M1101.5 853.5L1089.5 862.5L1134 1031.5H1154.5L1233 983.5L1174.5 882.5L1130 907.5L1101.5 853.5Z"
+              stroke="black" (click)="onZoneClick('M')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'N'" data-zone="N"
+              d="M1214 790.5L1197 799L1232.5 849.5L1186.5 877L1245.5 979L1342 922L1287.5 862L1214 790.5Z"
+              stroke="black"
+              (click)="onZoneClick('N')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'O'" data-zone="O"
+              d="M1231.5 763.5L1222.5 778.5L1347.5 905.5L1403.5 809.5L1307 755L1281.5 797.5L1231.5 763.5Z"
+              stroke="black" (click)="onZoneClick('O')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'P'" data-zone="P"
+              d="M1295 654.5L1285 670.5L1340 699L1313.5 741.5L1349.5 760.5L1418 800L1458.5 733.5L1455.5 701L1427.5 689L1393.5 683L1295 654.5Z"
+              stroke="black" (click)="onZoneClick('P')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'Q'" data-zone="Q"
+              d="M1354.5 574.5H1291.5V639L1445 680.5V554H1354.5V574.5Z"
+              stroke="black" (click)="onZoneClick('Q')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'R'" data-zone="R"
+              d="M1446.5 428.5H1351.5V449H1292.5V516L1351.5 518.5V538.5H1446.5V428.5Z"
+              stroke="black"
+              (click)="onZoneClick('R')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'S'" data-zone="S"
+              d="M1350.5 325H1292L1290.5 393.5L1350.5 395V415H1447.5V304H1350.5V325Z"
+              stroke="black"
+              (click)="onZoneClick('S')" />
+            <path class="zone-path outer"
+              [class.clicked]="currentSelectedZone === 'T'" data-zone="T"
+              d="M1436.5 281.5L1289 234V263.5H1296V273H1357.5V290.5H1436.5V281.5Z"
+              stroke="black"
+              (click)="onZoneClick('T')" />
+
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SB'" data-zone="SB"
+              d="M652.5 285V234.5H718.5V285H652.5Z" stroke="black"
+              (click)="onZoneClick('SB')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SC'" data-zone="SC"
+              d="M718.5 307.5H652.5V409H718.5V307.5Z" stroke="black"
+              (click)="onZoneClick('SC')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SD'" data-zone="SD"
+              d="M719 433H653V534.5H719V433Z" stroke="black"
+              (click)="onZoneClick('SD')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SE'" data-zone="SE"
+              d="M718 552H651.5V638L683.5 692L741.5 657.5L718 620.5V552Z"
+              stroke="black" (click)="onZoneClick('SE')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SF'" data-zone="SF"
+              d="M748.5 672L692.5 707L722.5 761L776 790.5L810.5 734L771.5 709.5L748.5 672Z"
+              stroke="black"
+              (click)="onZoneClick('SF')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SG'" data-zone="SG"
+              d="M859 763.5L822.5 741L789 799L844 831H890.5V763.5H859Z"
+              stroke="black" (click)="onZoneClick('SG')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SH'" data-zone="SH"
+              d="M1006.5 764H909.5V831H1006.5V764Z" stroke="black"
+              (click)="onZoneClick('SH')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SI'" data-zone="SI"
+              d="M1056.5 763H1024.5V831H1073L1127.5 798L1093 741.5L1056.5 763Z"
+              stroke="black"
+              (click)="onZoneClick('SI')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SJ'" data-zone="SJ"
+              d="M1143.5 711L1105.5 734L1141.5 791.5L1194.5 760.5L1222.5 706L1166.5 671L1143.5 711Z"
+              stroke="black"
+              (click)="onZoneClick('SJ')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SK'" data-zone="SK"
+              d="M1263.5 551.5H1197V621L1175 658L1234 691.5L1263.5 637.5V551.5Z"
+              stroke="black"
+              (click)="onZoneClick('SK')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SL'" data-zone="SL"
+              d="M1264.5 432H1198.5V534.5H1264.5V432Z" stroke="black"
+              (click)="onZoneClick('SL')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SM'" data-zone="SM"
+              d="M1265.5 307.5H1198L1200 410.5H1265.5V307.5Z" stroke="black"
+              (click)="onZoneClick('SM')" />
+            <path class="zone-path middle"
+              [class.clicked]="currentSelectedZone === 'SN'" data-zone="SN"
+              d="M1265.5 234.5H1198.5V286H1265.5V234.5Z" stroke="black"
+              (click)="onZoneClick('SN')" />
+
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'A1'" data-zone="A1"
+              d="M827 242H771.5L760.5 260V398H827V242Z" stroke="black"
+              (click)="onZoneClick('A1')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'A2'" data-zone="A2"
+              d="M852 239.5L840.5 252L842 396H931V252L894 239.5H852Z"
+              stroke="black" (click)="onZoneClick('A2')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'A3'" data-zone="A3"
+              d="M1017 240L982.5 252V396.5H1071.5V252L1060.5 240H1017Z"
+              stroke="black" (click)="onZoneClick('A3')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'A4'" data-zone="A4"
+              d="M1145.5 241.5H1090.5V399H1156V259.5L1145.5 241.5Z"
+              stroke="black" (click)="onZoneClick('A4')" />
+
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'B1'" data-zone="B1"
+              d="M824 415H761V535H790L824 514.5V415Z" stroke="black"
+              (click)="onZoneClick('B1')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'B2'" data-zone="B2"
+              d="M909 414.5H841.5V494H863L894 474.5V443L909 422.5V414.5Z"
+              stroke="black" (click)="onZoneClick('B2')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'B3'" data-zone="B3"
+              d="M1074 414H1006.5V420.5L1022.5 442V474.5L1055.5 494H1074V414Z"
+              stroke="black"
+              (click)="onZoneClick('B3')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'B4'" data-zone="B4"
+              d="M1154 414.5H1091.5V514L1128 534H1154V414.5Z" stroke="black"
+              (click)="onZoneClick('B4')" />
+
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'C1'" data-zone="C1"
+              d="M790 580L772.5 613.5V624L788 651H879V541.5H863V551.5H847V561H832V573H812V580H790Z"
+              stroke="black"
+              (click)="onZoneClick('C1')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'C2'" data-zone="C2"
+              d="M907 543H895.5V650H1023V543H1012.5V520.5H979.5V532.5H936.5V520.5H907V543Z"
+              stroke="black"
+              (click)="onZoneClick('C2')" />
+            <path class="zone-path inner"
+              [class.clicked]="currentSelectedZone === 'C3'" data-zone="C3"
+              d="M1053.5 541.5H1036V651H1130.5L1144.5 625V613.5L1125 581H1104.5V573H1083.5V564H1069.5V551.5H1053.5V541.5Z"
+              stroke="black" (click)="onZoneClick('C3')" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="info-cards">
+        <div class="price-card">
+          <h3 class="card-title">TICKET PRICE</h3>
+          <div class="price-zones">
+            <div class="price-zone-item">
+              <div class="zone-indicator inner"></div>
+              <div class="zone-info">
+                <span class="zone-name">ชั้นใน (A1-C3)</span>
+                <span class="zone-price">9,000 - 10,000 บาท</span>
+              </div>
+            </div>
+            <div class="price-zone-item">
+              <div class="zone-indicator middle"></div>
+              <div class="zone-info">
+                <span class="zone-name">ชั้นกลาง (SB-SN)</span>
+                <span class="zone-price">6,000 - 9,000 บาท</span>
+              </div>
+            </div>
+            <div class="price-zone-item">
+              <div class="zone-indicator outer"></div>
+              <div class="zone-info">
+                <span class="zone-name">ชั้นนอก (B-T)</span>
+                <span class="zone-price">3,000 - 4,500 บาท</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bookings-card" *ngIf="authService.isLoggedIn()">
+          <h3 class="card-title">รายการที่จอง</h3>
+          <div class="bookings-content">
+            <div *ngIf="isLoadingBookings" class="loading-section">
+              <div class="spinner"></div>
+              <p>กำลังโหลด...</p>
+            </div>
+
+            <div *ngIf="bookingError" class="error-section">
+              <p>{{ bookingError }}</p>
+              <button class="retry-btn"
+                (click)="loadAllBookings()">ลองใหม่</button>
+            </div>
+
+            <div
+              *ngIf="!isLoadingBookings && !bookingError && allBookings.length === 0"
+              class="empty-bookings">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+                  stroke="currentColor" stroke-width="2"
+                  fill="none" />
+                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
+                  stroke-width="2" />
+              </svg>
+              <p>ยังไม่มีการจอง</p>
+            </div>
+
+            <div
+              *ngIf="!isLoadingBookings && !bookingError && allBookings.length > 0"
+              class="bookings-list">
+              <div *ngFor="let booking of allBookings; trackBy: trackByBooking"
+                class="booking-item"
+                (click)="openDetailsModal('details', booking)">
+                <div class="booking-header">
+                  <span class="booking-id">#{{ booking.transactionId }}</span>
+                  <span class="booking-status"
+                    [class]="getStatusClass(booking.Status)">{{
+                    getStatusText(booking.Status)
+                    }}</span>
+                </div>
+                <div class="booking-amount">{{ formatPrice(booking.totalAmount)
+                  }}</div>
+                <div class="booking-seats">{{ booking.seats_data.length }}
+                  ที่นั่ง</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="seats-modal-overlay" [class.show]="showSeatsModal"
+  (click)="closeSeatsModal()">
+  <div class="modal-layout" [class.no-selection]="selectedSeats.size === 0">
+    <div class="info-panel">
+      <div class="panel-header">
+        <h3>โซน {{ currentSelectedZone }}</h3>
+        <button class="close-btn" (click)="closeSeatsModal()"
+          aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+              stroke-width="2" />
+            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+              stroke-width="2" />
+          </svg>
+        </button>
+      </div>
+
+      <div *ngIf="isLoadingSeats" class="loading-section">
+        <div class="spinner"></div>
+        <p>กำลังโหลด...</p>
+      </div>
+
+      <div *ngIf="seatError" class="error-section">
+        <p>{{ seatError }}</p>
+        <button class="retry-btn"
+          (click)="loadSeatsForZone(currentSelectedZone, true)">
+          ลองใหม่
+        </button>
+      </div>
+
+      <div *ngIf="!isLoadingSeats && !seatError && selectedZoneSeats.length > 0"
+        class="info-sections">
+        <div class="zone-stats">
+          <div class="stat-item">
+            <span class="stat-label">ที่นั่งทั้งหมด</span>
+            <span class="stat-value">{{ getVisibleSeatsCount() }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">ที่นั่งว่าง</span>
+            <span class="stat-value available">{{ getAvailableSeatsCount()
+              }}</span>
+          </div>
+        </div>
+
+        <div class="legend-section">
+          <h4>สถานะที่นั่ง</h4>
+          <div class="legend-items">
+            <div class="legend-item">
+              <div class="legend-demo">
+                <svg viewBox="0 0 24 24" class="legend-chair selected">
+                  <rect x="4" y="4" width="16" height="10" rx="2"
+                    class="chair-back" />
+                  <rect x="2" y="12" width="20" height="6" rx="3"
+                    class="chair-seat" />
+                  <rect x="4" y="18" width="2" height="4" class="chair-leg" />
+                  <rect x="18" y="18" width="2" height="4" class="chair-leg" />
+                </svg>
+                <div class="selection-circle"></div>
+              </div>
+              <span>เลือกแล้ว</span>
+            </div>
+            <div class="legend-item">
+              <svg viewBox="0 0 24 24" class="legend-person reserved">
+                <circle cx="12" cy="7" r="3" class="person-head" />
+                <path d="M12 11c-3 0-5.5 2-6 5h12c-0.5-3-3-5-6-5z"
+                  class="person-body" />
+              </svg>
+              <span>จองแล้ว</span>
+            </div>
+            <div class="legend-item">
+              <svg viewBox="0 0 24 24" class="legend-person paid">
+                <circle cx="12" cy="7" r="3" class="person-head" />
+                <path d="M12 11c-3 0-5.5 2-6 5h12c-0.5-3-3-5-6-5z"
+                  class="person-body" />
+              </svg>
+              <span>ชำระแล้ว</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="price-section">
+          <h4>ราคาตามสี</h4>
+          <div class="price-items">
+            <div *ngFor="let price of getUniquePrices(); trackBy: trackByPrice"
+              class="price-item">
+              <svg viewBox="0 0 24 24" class="price-chair"
+                [ngStyle]="{ '--chair-color': getPriceColor(price) }">
+                <rect x="4" y="4" width="16" height="10" rx="2"
+                  class="chair-back" />
+                <rect x="2" y="12" width="20" height="6" rx="3"
+                  class="chair-seat" />
+                <rect x="4" y="18" width="2" height="4" class="chair-leg" />
+                <rect x="18" y="18" width="2" height="4" class="chair-leg" />
+              </svg>
+              <span>{{ formatPrice(price) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="seat-grid-panel" (click)="$event.stopPropagation()">
+      <div *ngIf="!isLoadingSeats && !seatError && selectedZoneSeats.length > 0"
+        class="seats-container">
+        <div class="screen-indicator">SCREEN / หน้าจอ</div>
+
+        <div class="seats-grid" (scroll)="onSeatsGridScroll()">
+          <div
+            *ngFor="let rowGroup of getGroupedSeats(); trackBy: trackByRowGroup"
+            class="seat-row">
+            <div class="row-label-left">{{ rowGroup.row }}</div>
+            <div class="seats-in-row">
+              <div *ngFor="let seat of rowGroup.seats; trackBy: trackBySeat"
+                class="seat-item"
+                [class]="getSeatClassCombined(seat)"
+                [class.visible]="seat.VISIBLE === 'T'"
+                [class.invisible]="seat.VISIBLE === 'F'"
+                [class.selected]="isSeatSelected(seat)"
+                [ngStyle]="{ '--seat-price-color': getPriceColor(seat.PRICE) }"
+                [attr.data-tooltip]="(seat.VISIBLE === 'T' ? (getDisplaySeatNumber(seat) + ' - ' + formatPrice(seat.PRICE)) : '')"
+                (click)="onSeatClick(seat)"
+                (mouseenter)="showSeatTooltip($event, seat)"
+                (mousemove)="updateSeatTooltipPosition($event)"
+                (mouseleave)="hideSeatTooltip()">
+
+                <svg *ngIf="seat.STATUS === 0 && seat.VISIBLE === 'T'"
+                  viewBox="0 0 24 24" class="chair-icon">
+                  <rect x="4" y="4" width="16" height="10" rx="2"
+                    class="chair-back" />
+                  <rect x="2" y="12" width="20" height="6" rx="3"
+                    class="chair-seat" />
+                  <rect x="4" y="18" width="2" height="4" class="chair-leg" />
+                  <rect x="18" y="18" width="2" height="4" class="chair-leg" />
+                </svg>
+
+                <svg
+                  *ngIf="(seat.STATUS === 1 || seat.STATUS === 2) && seat.VISIBLE === 'T'"
+                  viewBox="0 0 24 24"
+                  class="person-icon">
+                  <circle cx="12" cy="7" r="3" class="person-head" />
+                  <path d="M12 11c-3 0-5.5 2-6 5h12c-0.5-3-3-5-6-5z"
+                    class="person-body" />
+                </svg>
+
+                <div *ngIf="isSeatSelected(seat) && seat.VISIBLE === 'T'"
+                  class="selection-indicator">
+                  <div class="selection-circle"></div>
+                </div>
+
+                <span *ngIf="seat.VISIBLE === 'T'" class="seat-number">{{
+                  getDisplaySeatNumber(seat) }}</span>
+              </div>
+            </div>
+            <div class="row-label-right">{{ rowGroup.row }}</div>
+          </div>
+          <div #seatTooltip class="seat-tooltip" id="seatTooltip"></div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="!isLoadingSeats && !seatError && selectedZoneSeats.length === 0"
+        class="no-seats">
+        <p>ไม่พบข้อมูลที่นั่งในโซนนี้</p>
+      </div>
+    </div>
+
+    <div class="selection-panel" [class.hidden]="selectedSeats.size === 0"
+      (click)="$event.stopPropagation()">
+      <div class="panel-header">
+        <h3>ที่นั่งที่เลือก ({{ selectedSeats.size }})</h3>
+        <button class="clear-btn"
+          (click)="clearAllSelectedSeats()">ล้างทั้งหมด</button>
+      </div>
+
+      <div class="selected-list">
+        <div *ngFor="let seatId of selectedSeats; trackBy: trackBySeatId"
+          class="selected-item">
+          <span class="seat-name">{{ getSelectedSeatDisplay(seatId) }}</span>
+          <span class="seat-price">{{ getSelectedSeatPrice(seatId) }}</span>
+          <button class="remove-btn" (click)="removeSeatFromSelection(seatId)"
+            [attr.aria-label]="'Remove seat ' + getSelectedSeatDisplay(seatId)">×</button>
+        </div>
+      </div>
+
+      <div class="selection-footer">
+        <div class="total-price">
+          <span class="total-label">ราคารวม</span>
+          <span class="total-amount">{{ getTotalPrice() }}</span>
+        </div>
+        <button class="booking-btn" (click)="proceedToBooking()"
+          [disabled]="isProcessingBooking || selectedSeats.size === 0">
+          <svg *ngIf="!isProcessingBooking" width="18" height="18"
+            viewBox="0 0 24 24" fill="none">
+            <path d="M9 11H1v2h8v3l4-4-4-4v3z" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M22 4L12 14l-3-3" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          <div *ngIf="isProcessingBooking" class="booking-spinner"></div>
+          {{ isProcessingBooking ? 'กำลังดำเนินการ...' : 'จองที่นั่ง' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="details-modal-overlay" [class.show]="showDetailsModal"
+  (click)="closeDetailsModal()">
+  <div *ngIf="modalData" class="details-modal-layout"
+    (click)="$event.stopPropagation()">
+
+    <div class="details-modal-container"
+      [class.single-card]="!showPaymentCard()">
+      <div class="booking-info-card">
+        <button class="close-btn card-close-btn" (click)="closeDetailsModal()"
+          aria-label="Close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+              stroke-width="2" />
+            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+              stroke-width="2" />
+          </svg>
+        </button>
+        <ng-container *ngIf="isResultMode()">
+          <div *ngIf="isResultSuccess()" class="success-result">
+            <div class="result-header">
+              <div class="success-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+                    stroke="currentColor" stroke-width="2" />
+                  <polyline points="22,4 12,14.01 9,11.01"
+                    stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <h2>การจองสำเร็จ!</h2>
+              <p class="subtitle">ที่นั่งของคุณได้รับการจองเรียบร้อยแล้ว</p>
+            </div>
+            <div class="booking-details">
+              <div class="detail-section">
+                <h3>รายละเอียดการจอง</h3>
+                <div class="detail-item">
+                  <span class="label">หมายเลขการจอง:</span>
+                  <span class="value">#{{ getModalTransactionId() }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">โซน:</span>
+                  <span class="value">{{ getModalZone() }}</span>
+                </div>
+              </div>
+              <div class="detail-section">
+                <h3>ที่นั่งที่จอง</h3>
+                <div class="booked-seats">
+                  <div
+                    *ngFor="let seat of getModalBookedSeats(); trackBy: trackByBookedSeat"
+                    class="seat-item">
+                    <div class="seat-icon">
+                      <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="10" rx="2"
+                          class="chair-back" />
+                        <rect x="2" y="12" width="20" height="6" rx="3"
+                          class="chair-seat" />
+                        <rect x="4" y="18" width="2" height="4"
+                          class="chair-leg" />
+                        <rect x="18" y="18" width="2" height="4"
+                          class="chair-leg" />
+                      </svg>
+                    </div>
+                    <div class="seat-info">
+                      <span class="seat-number">{{ seat.row }}{{ seat.display
+                        }}</span>
+                      <span class="seat-price">{{ formatPrice(seat.price)
+                        }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="total-section">
+                <div class="total-price">
+                  <span class="total-label">ราคารวมทั้งหมด</span>
+                  <span class="total-amount">{{
+                    formatPrice(getModalTotalAmount() || 0) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!isResultSuccess()" class="error-result">
+            <div class="result-header">
+              <div class="error-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor"
+                    stroke-width="2" />
+                  <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor"
+                    stroke-width="2" />
+                  <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <h2>การจองไม่สำเร็จ</h2>
+              <p class="subtitle">{{ getModalMessage() }}</p>
+            </div>
+            <div *ngIf="(getModalFailedSeats()?.length ?? 0) > 0"
+              class="failed-seats">
+              <h3>ที่นั่งที่ถูกจองไปแล้ว</h3>
+              <div class="failed-list">
+                <div
+                  *ngFor="let seat of getModalFailedSeats(); trackBy: trackByFailedSeat"
+                  class="failed-item">
+                  <div class="failed-icon"
+                    [class]="getStatusClass(seat.status)">
+                    <svg viewBox="0 0 24 24">
+                      <circle cx="12" cy="7" r="3" class="person-head" />
+                      <path d="M12 11c-3 0-5.5 2-6 5h12c-0.5-3-3-5-6-5z"
+                        class="person-body" />
+                    </svg>
+                  </div>
+                  <span class="seat-number">{{ seat.row }}{{ seat.display ||
+                    seat.column }}</span>
+                  <span class="seat-status"
+                    [class]="getStatusClass(seat.status)">{{
+                    getStatusText(seat.status) }}</span>
+                </div>
+              </div>
+              <p class="retry-message">กรุณาเลือกที่นั่งใหม่และลองอีกครั้ง</p>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="isDetailsMode()">
+          <div class="booking-header">
+            <div class="booking-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+                  stroke="currentColor" stroke-width="2"
+                  fill="none" />
+                <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
+                  stroke-width="2" />
+              </svg>
+            </div>
+            <h3>รายละเอียดการจอง</h3>
+            <span class="booking-status"
+              [class]="getStatusClass(getModalStatus())">{{
+              getStatusText(getModalStatus()) }}</span>
+          </div>
+
+          <div class="booking-content">
+            <div class="detail-section">
+              <h4>ข้อมูลการจอง</h4>
+              <div class="detail-item">
+                <span class="label">หมายเลขการจอง:</span>
+                <span class="value">#{{ getModalTransactionId() }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">จำนวนเงิน:</span>
+                <span class="value">{{ formatPrice(getModalTotalAmount() || 0)
+                  }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">สถานะ:</span>
+                <span class="value"
+                  [class]="getStatusClass(getModalStatus())">{{
+                  getStatusText(getModalStatus()) }}</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h4>ที่นั่งที่จอง ({{ getModalSeatsData()?.length || 0 }}
+                ที่นั่ง)</h4>
+              <div class="seats-grid">
+                <div
+                  *ngFor="let seat of getModalSeatsData(); trackBy: trackByBookingSeat"
+                  class="seat-item">
+                  <div class="seat-icon">
+                    <svg viewBox="0 0 24 24">
+                      <rect x="4" y="4" width="16" height="10" rx="2"
+                        class="chair-back" />
+                      <rect x="2" y="12" width="20" height="6" rx="3"
+                        class="chair-seat" />
+                      <rect x="4" y="18" width="2" height="4"
+                        class="chair-leg" />
+                      <rect x="18" y="18" width="2" height="4"
+                        class="chair-leg" />
+                    </svg>
+                  </div>
+                  <span class="seat-number">{{ seat.zone }}{{ seat.row }}{{
+                    getDisplayNumber(seat) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div *ngIf="showPaymentCard()" class="payment-card-container">
+        <div class="payment-card">
+          <button class="close-btn card-close-btn payment-close-btn"
+            (click)="closeDetailsModal()"
+            aria-label="Close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                stroke-width="2" />
+              <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                stroke-width="2" />
+            </svg>
+          </button>
+          <div class="payment-header">
+            <div class="payment-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"
+                  stroke="currentColor" stroke-width="2" />
+                <line x1="1" y1="10" x2="23" y2="10" stroke="currentColor"
+                  stroke-width="2" />
+              </svg>
+            </div>
+            <h3>ชำระเงิน</h3>
+            <p class="subtitle">อัปโหลดสลิปการโอนเงิน</p>
+          </div>
+          <div class="payment-qr-section">
+            <img src="assets/images/payment-qr.jpg" alt="Payment QR Code"
+              class="payment-qr-image">
+          </div>
+          <div class="payment-content">
+            <div class="transaction-item"
+              *ngIf="getModalTransactionId() as transactionId">
+              <div class="transaction-header">
+                <h4>รายการจอง #{{ transactionId }}</h4>
+              </div>
+
+              <div class="upload-section">
+                <div class="upload-area"
+                  [class.dragover]="dragover === transactionId"
+                  (dragover)="onDragOver($event, transactionId)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event, transactionId)"
+                  (click)="selectFile(transactionId)">
+
+                  <div *ngIf="!getUploadedImage(transactionId)"
+                    class="upload-placeholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                        stroke="currentColor" stroke-width="2" />
+                      <polyline points="14,2 14,8 20,8" stroke="currentColor"
+                        stroke-width="2" />
+                      <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor"
+                        stroke-width="2" />
+                      <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor"
+                        stroke-width="2" />
+                      <polyline points="10,9 9,9 8,9" stroke="currentColor"
+                        stroke-width="2" />
+                    </svg>
+                    <p>คลิกหรือลากไฟล์มาวางที่นี่</p>
+                    <span>รองรับ JPG, PNG, GIF (สูงสุด 16MB)</span>
+                  </div>
+
+                  <div *ngIf="getUploadedImage(transactionId)"
+                    class="uploaded-image">
+                    <img [src]="getUploadedImage(transactionId)"
+                      alt="สลิปที่อัปโหลด">
+                    <button class="remove-image"
+                      (click)="removeUploadedImage($event, transactionId)">
+                      <svg width="16" height="16" viewBox="0 0 24 24"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="18" y1="6" x2="6" y2="18"
+                          stroke="currentColor" stroke-width="2" />
+                        <line x1="6" y1="6" x2="18" y2="18"
+                          stroke="currentColor" stroke-width="2" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div *ngIf="isUploading === transactionId"
+                    class="uploading-overlay">
+                    <div class="upload-spinner"></div>
+                    <p>กำลังอัปโหลด...</p>
+                  </div>
+                </div>
+                <input type="file" [id]="'file-input-' + transactionId"
+                  accept="image/*" style="display: none"
+                  (change)="onFileSelected($event, transactionId)">
+              </div>
+
+              <div class="transaction-actions">
+                <button class="cancel-btn"
+                  [disabled]="isProcessing === transactionId"
+                  (click)="cancelTransaction(transactionId)">
+                  <svg *ngIf="isProcessing !== transactionId" width="16"
+                    height="16" viewBox="0 0 24 24" fill="none">
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                      stroke-width="2" />
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                      stroke-width="2" />
+                  </svg>
+                  <div *ngIf="isProcessing === transactionId"
+                    class="action-spinner"></div>
+                  {{ isProcessing === transactionId ?
+                  'กำลังยกเลิก...' : 'ยกเลิกการจอง' }}
+                </button>
+
+                <button class="pay-btn"
+                  [disabled]="!getUploadedImage(transactionId) || isProcessing === transactionId"
+                  (click)="payTransaction(transactionId)">
+                  <svg *ngIf="isProcessing !== transactionId" width="16"
+                    height="16" viewBox="0 0 24 24" fill="none">
+                    <polyline points="20,6 9,17 4,12" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  <div *ngIf="isProcessing === transactionId"
+                    class="action-spinner"></div>
+                  {{ isProcessing === transactionId ? 'กำลังชำระ...'
+                  : 'ชำระเงิน' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-confirmation [show]="showCancelConfirmation" [title]="'ยืนยันการยกเลิก'"
+    [message]="'คุณต้องการยกเลิกการจองนี้หรือไม่? การดำเนินการนี้ไม่สามารถย้อนกลับได้'"
+    [confirmText]="'ยกเลิกการจอง'"
+    [cancelText]="'ไม่ยกเลิก'"
+    [isProcessing]="isProcessing === pendingCancelTransactionId"
+    (confirmed)="onCancelConfirmed()" (cancelled)="onCancelCancelled()"
+    (closed)="onCancelCancelled()">
+  </app-confirmation>
+</div>

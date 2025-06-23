@@ -1,0 +1,83 @@
+<div class="auto-refresh-control">
+  <div class="refresh-section">
+    <button class="refresh-btn"
+            (click)="onManualRefresh()"
+            [disabled]="isRefreshing"
+            [title]="'รีเฟรชข้อมูล'">
+      <div *ngIf="!isRefreshing" class="refresh-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <polyline points="23,4 23,10 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div *ngIf="isRefreshing" class="refresh-progress">
+        <div class="progress-ring">
+          <svg class="progress-ring-svg" width="24" height="24">
+            <circle class="progress-ring-circle" cx="12" cy="12" r="8"></circle>
+          </svg>
+        </div>
+      </div>
+      <span>{{ isRefreshing ? 'กำลังรีเฟรช...' : 'รีเฟรช' }}</span>
+    </button>
+
+    <div class="auto-refresh-settings">
+      <button class="settings-toggle"
+              (click)="toggleSettings()"
+              [class.active]="showSettings"
+              [title]="'ตั้งค่าการรีเฟรชอัตโนมัติ'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+          <path d="m12 1 1.97 1.757a2 2 0 0 0 1.65.36l2.37-.635a2 2 0 0 1 2.12 1.168l.635 2.37a2 2 0 0 0 1.168 1.168l2.37.635a2 2 0 0 1 1.168 2.12l-.635 2.37a2 2 0 0 0 .36 1.65L23 12l-1.757 1.97a2 2 0 0 0-.36 1.65l.635 2.37a2 2 0 0 1-1.168 2.12l-2.37.635a2 2 0 0 0-1.168 1.168l-.635 2.37a2 2 0 0 1-2.12 1.168l-2.37-.635a2 2 0 0 0-1.65.36L12 23l-1.97-1.757a2 2 0 0 0-1.65-.36l-2.37.635a2 2 0 0 1-2.12-1.168l-.635-2.37a2 2 0 0 0-1.168-1.168l-2.37-.635a2 2 0 0 1-1.168-2.12l.635-2.37a2 2 0 0 0-.36-1.65L1 12l1.757-1.97a2 2 0 0 0 .36-1.65l-.635-2.37a2 2 0 0 1 1.168-2.12l2.37-.635a2 2 0 0 0 1.168-1.168l.635-2.37a2 2 0 0 1 2.12-1.168l2.37.635a2 2 0 0 0 1.65-.36z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </button>
+
+      <div class="settings-dropdown" [class.show]="showSettings">
+        <div class="settings-header">
+          <h4>ตั้งค่าการรีเฟรช</h4>
+          <div class="auto-status" [class.active]="isAutoRefreshEnabled">
+            <div class="status-indicator"></div>
+            <span>{{ isAutoRefreshEnabled ? 'เปิดใช้งาน' : 'ปิดใช้งาน' }}</span>
+          </div>
+        </div>
+
+        <div class="interval-options">
+          <label class="interval-option" *ngFor="let option of intervalOptions">
+            <input type="radio"
+                   [value]="option.value"
+                   [checked]="selectedInterval === option.value"
+                   (change)="onIntervalChange(option.value)"
+                   name="refresh-interval">
+            <span class="option-label">{{ option.label }}</span>
+            <span class="option-indicator"></span>
+          </label>
+        </div>
+
+        <div class="countdown-section" *ngIf="isAutoRefreshEnabled && timeRemaining > 0">
+          <div class="countdown-bar">
+            <div class="countdown-progress" [style.width.%]="countdownPercentage"></div>
+          </div>
+          <div class="countdown-text">
+            รีเฟรชอัตโนมัติใน {{ formatTimeRemaining(timeRemaining) }}
+          </div>
+        </div>
+
+        <div class="settings-actions">
+          <button class="apply-btn" (click)="applySettings()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            บันทึก
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="refresh-status" *ngIf="lastRefreshTime">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+      <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>อัปเดตล่าสุด: {{ formatLastRefresh(lastRefreshTime) }}</span>
+  </div>
+</div>

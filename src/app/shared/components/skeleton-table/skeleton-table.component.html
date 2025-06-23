@@ -1,0 +1,18 @@
+<div class="skeleton-table-container">
+  <table class="skeleton-table">
+    <thead>
+      <tr>
+        <th *ngFor="let col of columns" class="skeleton-th">
+          <div class="skeleton-header"></div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of rows" class="skeleton-row">
+        <td *ngFor="let col of columns" class="skeleton-cell">
+          <div class="skeleton-content" [ngClass]="col.type"></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

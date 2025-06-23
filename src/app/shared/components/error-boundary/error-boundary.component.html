@@ -1,0 +1,101 @@
+<div class="error-boundary" [class.show]="hasError">
+  <div class="error-content">
+    <div class="error-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+        <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+        <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="error-details">
+      <h3 class="error-title">{{ errorTitle }}</h3>
+      <p class="error-message">{{ errorMessage }}</p>
+
+      <div class="error-meta" *ngIf="showDetails">
+        <div class="error-time">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          เกิดข้อผิดพลาดเมื่อ: {{ formatErrorTime(errorTime) }}
+        </div>
+
+        <div class="retry-info" *ngIf="retryCount > 0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <polyline points="1 4 1 10 7 10" stroke="currentColor" stroke-width="2"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          พยายามใหม่: {{ retryCount }}/{{ maxRetries }} ครั้ง
+        </div>
+      </div>
+
+      <div class="error-stack" *ngIf="showTechnicalDetails && errorStack">
+        <button class="toggle-stack-btn" (click)="toggleStackTrace()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <polyline [attr.points]="showStackTrace ? '18,15 12,9 6,15' : '6,9 12,15 18,9'"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {{ showStackTrace ? 'ซ่อน' : 'แสดง' }}รายละเอียดทางเทคนิค
+        </button>
+
+        <div class="stack-trace" [class.show]="showStackTrace">
+          <pre>{{ errorStack }}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-actions">
+      <button class="retry-btn primary"
+              (click)="onRetry()"
+              [disabled]="isRetrying"
+              *ngIf="canRetry">
+        <div *ngIf="isRetrying" class="retry-spinner"></div>
+        <svg *ngIf="!isRetrying" width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <polyline points="1 4 1 10 7 10" stroke="currentColor" stroke-width="2"/>
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <span>{{ isRetrying ? 'กำลังลองใหม่...' : 'ลองใหม่' }}</span>
+      </button>
+
+      <button class="reload-btn secondary" (click)="onReload()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <polyline points="23,4 23,10 17,10" stroke="currentColor" stroke-width="2"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        โหลดหน้าใหม่
+      </button>
+
+      <button class="details-toggle-btn tertiary" (click)="toggleDetails()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 16v-4" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 8h.01" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        {{ showDetails ? 'ซ่อน' : 'แสดง' }}รายละเอียด
+      </button>
+    </div>
+
+    <div class="auto-retry-section" *ngIf="autoRetryEnabled && retryCount < maxRetries">
+      <div class="auto-retry-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="autoRetryProgress"></div>
+        </div>
+        <div class="progress-text">
+          ลองใหม่อัตโนมัติใน {{ autoRetryCountdown }} วินาที
+        </div>
+      </div>
+
+      <button class="cancel-auto-retry-btn" (click)="cancelAutoRetry()">
+        ยกเลิกการลองใหม่อัตโนมัติ
+      </button>
+    </div>
+  </div>
+
+  <div class="error-background-pattern">
+    <div class="pattern-dot" *ngFor="let dot of backgroundDots"
+         [style.left.%]="dot.x"
+         [style.top.%]="dot.y"
+         [style.animation-delay]="dot.delay + 's'"></div>
+  </div>
+</div>

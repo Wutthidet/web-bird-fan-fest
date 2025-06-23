@@ -1,0 +1,104 @@
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: rgba(27, 38, 44, 0.4);
+  border-radius: 20px;
+  border: 1px solid rgba(50, 130, 184, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(50, 130, 184, 0.1),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  .skeleton-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background: linear-gradient(
+      90deg,
+      rgba(50, 130, 184, 0.1) 25%,
+      rgba(50, 130, 184, 0.2) 50%,
+      rgba(50, 130, 184, 0.1) 75%
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .skeleton-card-value {
+    height: 2rem;
+    width: 80px;
+    border-radius: 8px;
+    background: linear-gradient(
+      90deg,
+      rgba(187, 225, 250, 0.1) 25%,
+      rgba(187, 225, 250, 0.2) 50%,
+      rgba(187, 225, 250, 0.1) 75%
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton-card-label {
+    height: 1rem;
+    width: 120px;
+    border-radius: 6px;
+    background: linear-gradient(
+      90deg,
+      rgba(50, 130, 184, 0.1) 25%,
+      rgba(50, 130, 184, 0.2) 50%,
+      rgba(50, 130, 184, 0.1) 75%
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-card {
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+
+    .skeleton-card-icon {
+      width: 50px;
+      height: 50px;
+    }
+
+    .skeleton-card-content {
+      align-items: center;
+    }
+  }
+}

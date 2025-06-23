@@ -1,0 +1,30 @@
+<div class="toast-container">
+  <div *ngFor="let toast of toasts; trackBy: trackByToastId" class="toast-item" [class]="'toast-' + toast.type">
+
+      <div class="toast-content">
+          <div class="toast-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path [attr.d]="getToastIcon(toast.type)"></path>
+              </svg>
+          </div>
+
+          <div class="toast-text">
+              <div class="toast-title">{{ toast.title }}</div>
+              <div *ngIf="toast.message" class="toast-message">{{ toast.message }}</div>
+          </div>
+
+          <button class="toast-close" (click)="removeToast(toast.id)" aria-label="Close notification">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+          </button>
+      </div>
+
+      <div class="toast-progress" [class]="'progress-' + toast.type">
+          <div class="progress-bar" [style.animation-duration.ms]="toast.duration"></div>
+      </div>
+  </div>
+</div>

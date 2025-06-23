@@ -1,0 +1,33 @@
+<div class="confirmation-overlay" [class.show]="show" (click)="onOverlayClick($event)">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ title }}</h3>
+      <button class="close-btn" (click)="onClose()" [disabled]="isProcessing" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" />
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="warning-icon" [ngClass]="confirmationType">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"
+                stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>
+      </div>
+      <p>{{ message }}</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="onCancel()" [disabled]="isProcessing">
+        {{ cancelText }}
+      </button>
+      <button class="confirm-btn" [ngClass]="confirmationType" (click)="onConfirm()" [disabled]="isProcessing">
+        <div *ngIf="isProcessing" class="btn-spinner"></div>
+        <span>{{ confirmText }}</span>
+      </button>
+    </div>
+  </div>
+</div>

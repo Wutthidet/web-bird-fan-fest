@@ -1,0 +1,156 @@
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton-table-container {
+  background: rgba(27, 38, 44, 0.6);
+  border-radius: 20px;
+  border: 1px solid rgba(50, 130, 184, 0.2);
+  overflow: hidden;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.skeleton-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: rgba(50, 130, 184, 0.15);
+
+    .skeleton-th {
+      padding: 1.5rem 1rem;
+      text-align: left;
+      border-bottom: 2px solid rgba(50, 130, 184, 0.3);
+    }
+
+    .skeleton-header {
+      height: 16px;
+      width: 80px;
+      border-radius: 4px;
+      background: linear-gradient(
+        90deg,
+        rgba(50, 130, 184, 0.2) 25%,
+        rgba(50, 130, 184, 0.4) 50%,
+        rgba(50, 130, 184, 0.2) 75%
+      );
+      background-size: 200px 100%;
+      animation: shimmer 1.5s infinite;
+    }
+  }
+
+  tbody {
+    .skeleton-row {
+      border-bottom: 1px solid rgba(50, 130, 184, 0.1);
+
+      &:nth-child(even) {
+        background: rgba(50, 130, 184, 0.02);
+      }
+
+      &:hover {
+        background: rgba(50, 130, 184, 0.08);
+      }
+    }
+
+    .skeleton-cell {
+      padding: 1.25rem 1rem;
+      vertical-align: middle;
+    }
+
+    .skeleton-content {
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(
+        90deg,
+        rgba(187, 225, 250, 0.1) 25%,
+        rgba(187, 225, 250, 0.2) 50%,
+        rgba(187, 225, 250, 0.1) 75%
+      );
+      background-size: 200px 100%;
+      animation: shimmer 1.5s infinite;
+
+      &.id {
+        width: 80px;
+        height: 20px;
+        border-radius: 10px;
+      }
+
+      &.name {
+        width: 150px;
+      }
+
+      &.amount {
+        width: 100px;
+        height: 18px;
+        border-radius: 9px;
+      }
+
+      &.status {
+        width: 90px;
+        height: 24px;
+        border-radius: 12px;
+      }
+
+      &.date {
+        width: 120px;
+      }
+
+      &.actions {
+        width: 80px;
+        height: 32px;
+        border-radius: 8px;
+      }
+
+      &.short {
+        width: 60px;
+      }
+
+      &.medium {
+        width: 100px;
+      }
+
+      &.long {
+        width: 180px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-table {
+    font-size: 0.9rem;
+
+    .skeleton-th,
+    .skeleton-cell {
+      padding: 1rem 0.5rem;
+    }
+
+    .skeleton-content {
+      &.name {
+        width: 120px;
+      }
+
+      &.amount {
+        width: 80px;
+      }
+
+      &.status {
+        width: 70px;
+      }
+
+      &.date {
+        width: 100px;
+      }
+
+      &.actions {
+        width: 60px;
+        height: 28px;
+      }
+    }
+  }
+}

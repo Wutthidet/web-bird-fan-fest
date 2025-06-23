@@ -1,0 +1,1747 @@
+<div class="admin-dashboard">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Admin Dashboard</h1>
+      <app-auto-refresh-control
+        [isRefreshing]="loadingStates.globalRefresh"
+        [lastRefreshTime]="lastRefreshTime"
+        (refresh)="onManualRefresh()"
+        (intervalChange)="onAutoRefreshIntervalChange($event)">
+      </app-auto-refresh-control>
+    </div>
+
+    <div class="dashboard-tabs">
+      <button class="tab-btn"
+        [class.active]="activeTab === 'overview'"
+        (click)="switchTab('overview')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+            stroke="currentColor" stroke-width="2" />
+          <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
+            stroke-width="2" />
+          <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+            stroke-width="2" />
+          <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
+            stroke-width="2" />
+        </svg>
+        ภาพรวม
+      </button>
+
+      <button class="tab-btn"
+        [class.active]="activeTab === 'transactions'"
+        (click)="switchTab('transactions')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"
+            stroke="currentColor" stroke-width="2" />
+          <line x1="1" y1="10" x2="23" y2="10" stroke="currentColor"
+            stroke-width="2" />
+        </svg>
+        จัดการจอง
+        <span class="tab-badge" *ngIf="getTransactionCountByStatus(2) > 0">
+          {{ getTransactionCountByStatus(2) }}
+        </span>
+      </button>
+
+      <button class="tab-btn"
+        [class.active]="activeTab === 'seat-logs'"
+        (click)="switchTab('seat-logs')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3" stroke="currentColor"
+            stroke-width="2" />
+          <path
+            d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"
+            stroke="currentColor" stroke-width="2" />
+        </svg>
+        ประวัติที่นั่ง
+      </button>
+    </div>
+
+    <div class="dashboard-content">
+      <div *ngIf="activeTab === 'overview'" class="zone-stats-section">
+        <h2 class="section-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+              stroke="currentColor" stroke-width="2" />
+            <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
+              stroke-width="2" />
+            <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+              stroke-width="2" />
+            <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
+              stroke-width="2" />
+          </svg>
+          ภาพรวมที่นั่ง
+        </h2>
+
+        <div *ngIf="loadingStates.zones" class="summary-cards">
+          <app-skeleton-card *ngFor="let i of [1,2,3,4]"></app-skeleton-card>
+        </div>
+
+        <div *ngIf="errorStates.zones && !loadingStates.zones"
+          class="error-section">
+          <div class="error-content">
+            <div class="error-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor"
+                  stroke-width="2" />
+              </svg>
+            </div>
+            <p>{{ errorStates.zones }}</p>
+            <button class="retry-btn" (click)="loadZoneStats()">ลองใหม่</button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loadingStates.zones && !errorStates.zones && zoneStats.length > 0">
+          <div class="summary-cards">
+            <div class="summary-card total-seats">
+              <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="6" width="18" height="12" rx="2"
+                    stroke="currentColor" stroke-width="2" />
+                  <path d="M12 2v4M12 18v4" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3 class="card-value">{{ getTotalSeats() | number }}</h3>
+                <p class="card-label">ที่นั่งทั้งหมด</p>
+              </div>
+            </div>
+
+            <div class="summary-card available-seats">
+              <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor"
+                    stroke-width="2" />
+                  <polyline points="8,12 12,16 16,8" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3 class="card-value">{{ getTotalAvailable() | number }}</h3>
+                <p class="card-label">ที่นั่งว่าง</p>
+              </div>
+            </div>
+
+            <div class="summary-card occupied-seats">
+              <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="3" width="18" height="18" rx="2"
+                    stroke="currentColor" stroke-width="2" />
+                  <path d="M9 12l2 2 4-4" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3 class="card-value">{{ getTotalOccupied() | number }}</h3>
+                <p class="card-label">จองแล้ว</p>
+              </div>
+            </div>
+
+            <div class="summary-card occupancy-rate">
+              <div class="card-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor"
+                    stroke-width="2" />
+                  <path d="M12 8v8M8 12h8" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3 class="card-value">{{ getOverallOccupancyRate() }}%</h3>
+                <p class="card-label">อัตราการจอง</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="zones-chart-section">
+            <h3 class="chart-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor"
+                  stroke-width="2" fill="none" />
+                <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" />
+              </svg>
+              ภาพรวมการจอง
+            </h3>
+
+            <div class="chart-container">
+              <div class="donut-chart-container">
+                <div class="donut-chart">
+                  <svg viewBox="0 0 200 200" class="donut-svg">
+                    <circle cx="100" cy="100" r="80"
+                      fill="none"
+                      stroke="rgba(50, 130, 184, 0.1)"
+                      stroke-width="20" />
+
+                    <circle *ngIf="getNormalZonesCount() > 0"
+                      cx="100" cy="100" r="80"
+                      fill="none"
+                      stroke="url(#normalGradient)"
+                      stroke-width="20"
+                      [attr.stroke-dasharray]="getNormalArcLength() + ' ' + (502.65 - getNormalArcLength())"
+                      [attr.stroke-dashoffset]="0"
+                      class="donut-segment normal-segment"
+                      (click)="showNormalZones()" />
+
+                    <circle *ngIf="getWarningZonesCount() > 0"
+                      cx="100" cy="100" r="80"
+                      fill="none"
+                      stroke="url(#warningGradient)"
+                      stroke-width="20"
+                      [attr.stroke-dasharray]="getWarningArcLength() + ' ' + (502.65 - getWarningArcLength())"
+                      [attr.stroke-dashoffset]="-getNormalArcLength()"
+                      class="donut-segment warning-segment"
+                      (click)="showWarningZones()" />
+
+                    <circle *ngIf="getCriticalZonesCount() > 0"
+                      cx="100" cy="100" r="80"
+                      fill="none"
+                      stroke="url(#criticalGradient)"
+                      stroke-width="20"
+                      [attr.stroke-dasharray]="getCriticalArcLength() + ' ' + (502.65 - getCriticalArcLength())"
+                      [attr.stroke-dashoffset]="-(getNormalArcLength() + getWarningArcLength())"
+                      class="donut-segment critical-segment"
+                      (click)="showCriticalZones()" />
+
+                    <defs>
+                      <lineargradient id="normalGradient" x1="0%" y1="0%"
+                        x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#38a169" />
+                        <stop offset="100%" style="stop-color:#68d391" />
+                      </lineargradient>
+                      <lineargradient id="warningGradient" x1="0%" y1="0%"
+                        x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#dd6b20" />
+                        <stop offset="100%" style="stop-color:#ed8936" />
+                      </lineargradient>
+                      <lineargradient id="criticalGradient" x1="0%" y1="0%"
+                        x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#e53e3e" />
+                        <stop offset="100%" style="stop-color:#ff6b6b" />
+                      </lineargradient>
+                    </defs>
+                  </svg>
+
+                  <div class="donut-center">
+                    <div class="center-value">{{ getOverallOccupancyRate()
+                      }}%</div>
+                    <div class="center-label">อัตราการจอง</div>
+                  </div>
+                </div>
+
+                <div class="donut-legend">
+                  <div class="legend-item normal" (click)="showNormalZones()">
+                    <div class="legend-indicator">
+                      <div class="legend-color"></div>
+                      <span class="legend-count">{{ getNormalZonesCount()
+                        }}</span>
+                    </div>
+                    <div class="legend-info">
+                      <span class="legend-title">ปกติ</span>
+                      <span class="legend-desc">0-70%</span>
+                    </div>
+                  </div>
+
+                  <div class="legend-item warning" (click)="showWarningZones()">
+                    <div class="legend-indicator">
+                      <div class="legend-color"></div>
+                      <span class="legend-count">{{ getWarningZonesCount()
+                        }}</span>
+                    </div>
+                    <div class="legend-info">
+                      <span class="legend-title">เริ่มเต็ม</span>
+                      <span class="legend-desc">71-90%</span>
+                    </div>
+                  </div>
+
+                  <div class="legend-item critical"
+                    (click)="showCriticalZones()">
+                    <div class="legend-indicator">
+                      <div class="legend-color"></div>
+                      <span class="legend-count">{{ getCriticalZonesCount()
+                        }}</span>
+                    </div>
+                    <div class="legend-info">
+                      <span class="legend-title">เกือบเต็ม</span>
+                      <span class="legend-desc">91-100%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="group-comparison-bars">
+                <h4 class="bars-title">เปรียบเทียบกลุ่มโซน</h4>
+                <div class="comparison-bars">
+                  <div class="comparison-bar inner"
+                    (click)="toggleZoneGroup('inner')">
+                    <div class="bar-header">
+                      <div class="bar-info">
+                        <span class="bar-label">ชั้นใน</span>
+                        <span class="bar-count">{{ getInnerZones().length }}
+                          โซน</span>
+                      </div>
+                      <span class="bar-percentage">{{
+                        getGroupOccupancyRate('inner') }}%</span>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-fill inner-fill"
+                        [style.width.%]="getGroupOccupancyRate('inner')"></div>
+                    </div>
+                    <div class="bar-stats">
+                      <span class="available">{{ getGroupAvailable('inner') }}
+                        ว่าง</span>
+                      <span class="total">{{ getGroupTotal('inner') }}
+                        ทั้งหมด</span>
+                    </div>
+                  </div>
+
+                  <div class="comparison-bar middle"
+                    (click)="toggleZoneGroup('middle')">
+                    <div class="bar-header">
+                      <div class="bar-info">
+                        <span class="bar-label">ชั้นกลาง</span>
+                        <span class="bar-count">{{ getMiddleZones().length }}
+                          โซน</span>
+                      </div>
+                      <span class="bar-percentage">{{
+                        getGroupOccupancyRate('middle') }}%</span>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-fill middle-fill"
+                        [style.width.%]="getGroupOccupancyRate('middle')"></div>
+                    </div>
+                    <div class="bar-stats">
+                      <span class="available">{{ getGroupAvailable('middle') }}
+                        ว่าง</span>
+                      <span class="total">{{ getGroupTotal('middle') }}
+                        ทั้งหมด</span>
+                    </div>
+                  </div>
+
+                  <div class="comparison-bar outer"
+                    (click)="toggleZoneGroup('outer')">
+                    <div class="bar-header">
+                      <div class="bar-info">
+                        <span class="bar-label">ชั้นนอก</span>
+                        <span class="bar-count">{{ getOuterZones().length }}
+                          โซน</span>
+                      </div>
+                      <span class="bar-percentage">{{
+                        getGroupOccupancyRate('outer') }}%</span>
+                    </div>
+                    <div class="bar-track">
+                      <div class="bar-fill outer-fill"
+                        [style.width.%]="getGroupOccupancyRate('outer')"></div>
+                    </div>
+                    <div class="bar-stats">
+                      <span class="available">{{ getGroupAvailable('outer') }}
+                        ว่าง</span>
+                      <span class="total">{{ getGroupTotal('outer') }}
+                        ทั้งหมด</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="zone-groups">
+            <div class="zone-group inner-group">
+              <div class="group-header" (click)="toggleZoneGroup('inner')">
+                <div class="group-info">
+                  <div class="group-icon inner">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="4" fill="currentColor" />
+                    </svg>
+                  </div>
+                  <div class="group-details">
+                    <h3 class="group-title">ชั้นใน (Inner Zones)</h3>
+                    <p class="group-stats">{{ getInnerZones().length }} โซน • {{
+                      getGroupOccupancyRate('inner') }}% จอง</p>
+                  </div>
+                </div>
+                <div class="group-summary">
+                  <span class="available">{{ getGroupAvailable('inner')
+                    }}</span>
+                  <span class="separator">/</span>
+                  <span class="total">{{ getGroupTotal('inner') }}</span>
+                </div>
+                <div class="expand-icon"
+                  [class.expanded]="expandedGroups.inner">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <polyline points="6,9 12,15 18,9" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="group-content"
+                [class.expanded]="expandedGroups.inner">
+                <div class="zones-grid">
+                  <div
+                    *ngFor="let zone of getInnerZones(); trackBy: trackByZone"
+                    class="zone-card inner"
+                    (click)="openZoneDetails(zone)">
+                    <div class="zone-header">
+                      <h4 class="zone-name">{{ zone.ZONE }}</h4>
+                      <div class="zone-occupancy">{{
+                        getOccupancyPercentage(zone) }}%</div>
+                    </div>
+                    <div class="zone-progress">
+                      <div class="progress-bar">
+                        <div class="progress-fill"
+                          [style.width.%]="getOccupancyPercentage(zone)"></div>
+                      </div>
+                    </div>
+                    <div class="zone-stats">
+                      <span class="available">{{ zone.Available }}</span>
+                      <span class="separator">/</span>
+                      <span class="total">{{ zone.Max }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="zone-group middle-group">
+              <div class="group-header" (click)="toggleZoneGroup('middle')">
+                <div class="group-info">
+                  <div class="group-icon middle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="7" stroke="currentColor"
+                        stroke-width="3" fill="none" />
+                    </svg>
+                  </div>
+                  <div class="group-details">
+                    <h3 class="group-title">ชั้นกลาง (Middle Zones)</h3>
+                    <p class="group-stats">{{ getMiddleZones().length }} โซน •
+                      {{ getGroupOccupancyRate('middle') }}% จอง</p>
+                  </div>
+                </div>
+                <div class="group-summary">
+                  <span class="available">{{ getGroupAvailable('middle')
+                    }}</span>
+                  <span class="separator">/</span>
+                  <span class="total">{{ getGroupTotal('middle') }}</span>
+                </div>
+                <div class="expand-icon"
+                  [class.expanded]="expandedGroups.middle">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <polyline points="6,9 12,15 18,9" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="group-content"
+                [class.expanded]="expandedGroups.middle">
+                <div class="zones-grid">
+                  <div
+                    *ngFor="let zone of getMiddleZones(); trackBy: trackByZone"
+                    class="zone-card middle"
+                    (click)="openZoneDetails(zone)">
+                    <div class="zone-header">
+                      <h4 class="zone-name">{{ zone.ZONE }}</h4>
+                      <div class="zone-occupancy">{{
+                        getOccupancyPercentage(zone) }}%</div>
+                    </div>
+                    <div class="zone-progress">
+                      <div class="progress-bar">
+                        <div class="progress-fill"
+                          [style.width.%]="getOccupancyPercentage(zone)"></div>
+                      </div>
+                    </div>
+                    <div class="zone-stats">
+                      <span class="available">{{ zone.Available }}</span>
+                      <span class="separator">/</span>
+                      <span class="total">{{ zone.Max }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="zone-group outer-group">
+              <div class="group-header" (click)="toggleZoneGroup('outer')">
+                <div class="group-info">
+                  <div class="group-icon outer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="2" fill="none" />
+                    </svg>
+                  </div>
+                  <div class="group-details">
+                    <h3 class="group-title">ชั้นนอก (Outer Zones)</h3>
+                    <p class="group-stats">{{ getOuterZones().length }} โซน • {{
+                      getGroupOccupancyRate('outer') }}% จอง</p>
+                  </div>
+                </div>
+                <div class="group-summary">
+                  <span class="available">{{ getGroupAvailable('outer')
+                    }}</span>
+                  <span class="separator">/</span>
+                  <span class="total">{{ getGroupTotal('outer') }}</span>
+                </div>
+                <div class="expand-icon"
+                  [class.expanded]="expandedGroups.outer">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <polyline points="6,9 12,15 18,9" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="group-content"
+                [class.expanded]="expandedGroups.outer">
+                <div class="zones-grid">
+                  <div
+                    *ngFor="let zone of getOuterZones(); trackBy: trackByZone"
+                    class="zone-card outer"
+                    (click)="openZoneDetails(zone)">
+                    <div class="zone-header">
+                      <h4 class="zone-name">{{ zone.ZONE }}</h4>
+                      <div class="zone-occupancy">{{
+                        getOccupancyPercentage(zone) }}%</div>
+                    </div>
+                    <div class="zone-progress">
+                      <div class="progress-bar">
+                        <div class="progress-fill"
+                          [style.width.%]="getOccupancyPercentage(zone)"></div>
+                      </div>
+                    </div>
+                    <div class="zone-stats">
+                      <span class="available">{{ zone.Available }}</span>
+                      <span class="separator">/</span>
+                      <span class="total">{{ zone.Max }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'transactions'" class="transactions-section">
+        <div class="transactions-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"
+                stroke="currentColor" stroke-width="2" />
+              <line x1="1" y1="10" x2="23" y2="10" stroke="currentColor"
+                stroke-width="2" />
+            </svg>
+            จัดการรายการจอง
+          </h2>
+
+          <div class="transaction-summary">
+            <div class="summary-item">
+              <span class="summary-label">ทั้งหมด:</span>
+              <span class="summary-value">{{ pagination.totalItems }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">แสดง:</span>
+              <span class="summary-value">{{ displayedTransactions.length
+                }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="transaction-controls">
+          <div class="search-section">
+            <div class="advanced-search-container">
+              <div class="search-bar">
+                <div class="search-input-wrapper">
+                  <svg class="search-icon" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor"
+                      stroke-width="2" />
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  <input
+                    type="text"
+                    [(ngModel)]="searchQuery"
+                    (input)="onSearchChange()"
+                    placeholder="ค้นหา Transaction ID, ชื่อ-นามสกุล, อีเมล, เบอร์โทร..."
+                    class="search-input">
+                  <button
+                    *ngIf="searchQuery"
+                    (click)="searchQuery = ''; onSearchChange()"
+                    class="clear-search-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                        stroke-width="2" />
+                      <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                        stroke-width="2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="search-actions">
+                <button class="filter-toggle-btn" (click)="toggleFilters()"
+                  [class.active]="showFilters">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"
+                      stroke="currentColor" stroke-width="2"
+                      stroke-linejoin="round" />
+                  </svg>
+                  ตัวกรอง
+                  <span
+                    *ngIf="filterOptions.dateFrom || filterOptions.dateTo || filterOptions.amountMin !== null || filterOptions.amountMax !== null || filterOptions.seatsMin !== null || filterOptions.seatsMax !== null"
+                    class="filter-indicator"></span>
+                </button>
+
+                <button class="clear-filters-btn" (click)="clearFilters()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                      stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  ล้างตัวกรอง
+                </button>
+              </div>
+            </div>
+
+            <div class="filters-panel" [class.expanded]="showFilters">
+              <div class="filters-grid">
+                <div class="filter-group">
+                  <label class="filter-label">ช่วงวันที่</label>
+                  <div class="date-range">
+                    <input
+                      type="date"
+                      [(ngModel)]="filterOptions.dateFrom"
+                      (change)="onFilterChange()"
+                      class="date-input">
+                    <span class="date-separator">ถึง</span>
+                    <input
+                      type="date"
+                      [(ngModel)]="filterOptions.dateTo"
+                      (change)="onFilterChange()"
+                      class="date-input">
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label class="filter-label">จำนวนเงิน (บาท)</label>
+                  <div class="amount-range">
+                    <input
+                      type="number"
+                      [(ngModel)]="filterOptions.amountMin"
+                      (input)="onFilterChange()"
+                      placeholder="ต่ำสุด"
+                      class="amount-input">
+                    <span class="range-separator">-</span>
+                    <input
+                      type="number"
+                      [(ngModel)]="filterOptions.amountMax"
+                      (input)="onFilterChange()"
+                      placeholder="สูงสุด"
+                      class="amount-input">
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label class="filter-label">จำนวนที่นั่ง</label>
+                  <div class="seats-range">
+                    <input
+                      type="number"
+                      [(ngModel)]="filterOptions.seatsMin"
+                      (input)="onFilterChange()"
+                      placeholder="น้อยสุด"
+                      min="1"
+                      class="seats-input">
+                    <span class="range-separator">-</span>
+                    <input
+                      type="number"
+                      [(ngModel)]="filterOptions.seatsMax"
+                      (input)="onFilterChange()"
+                      placeholder="มากสุด"
+                      min="1"
+                      class="seats-input">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-filters">
+            <button *ngFor="let filter of statusFilters; trackBy: trackByFilter"
+              class="filter-btn"
+              [class.active]="selectedStatusFilter === filter.status"
+              (click)="setStatusFilter(filter.status)">
+              <div class="filter-icon" [class]="'status-' + filter.status">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <span>{{ filter.label }}</span>
+              <span class="filter-count">{{
+                getFilteredCountByStatus(filter.status) }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="loadingStates.transactions"
+          class="transactions-loading-section">
+          <app-skeleton-table [columns]="skeletonColumns"
+            [rowCount]="pagination.itemsPerPage"></app-skeleton-table>
+        </div>
+
+        <div *ngIf="errorStates.transactions && !loadingStates.transactions"
+          class="error-section">
+          <div class="error-content">
+            <div class="error-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor"
+                  stroke-width="2" />
+              </svg>
+            </div>
+            <p>{{ errorStates.transactions }}</p>
+            <button class="retry-btn"
+              (click)="loadTransactions()">ลองใหม่</button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loadingStates.transactions && !errorStates.transactions && displayedTransactions.length > 0"
+          class="transactions-table-section">
+          <div *ngIf="showBulkActions" class="bulk-actions-bar">
+            <div class="bulk-info">
+              <span class="selected-count">เลือก {{
+                getSelectedTransactionsCount() }} รายการ</span>
+              <button class="clear-selection-btn" (click)="clearSelection()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                    stroke-width="2" />
+                  <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+                ล้างการเลือก
+              </button>
+            </div>
+            <div class="bulk-actions">
+              <button class="bulk-action-btn approve"
+                (click)="bulkApproveTransactions()" [disabled]="isProcessing">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="20,6 9,17 4,12" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                อนุมัติที่เลือก
+              </button>
+              <button class="bulk-action-btn cancel"
+                (click)="bulkCancelTransactions()" [disabled]="isProcessing">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                    stroke-width="2" />
+                  <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+                ยกเลิกที่เลือก
+              </button>
+            </div>
+          </div>
+          <div class="table-controls">
+            <div class="items-per-page">
+              <label>แสดง</label>
+              <select [(ngModel)]="pagination.itemsPerPage"
+                (change)="changeItemsPerPage(pagination.itemsPerPage)"
+                class="items-select">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+              <span>รายการต่อหน้า</span>
+            </div>
+
+            <div class="table-info">
+              แสดง {{ getPaginationStartIndex() }} -
+              {{ getPaginationEndIndex() }}
+              จาก {{ pagination.totalItems }} รายการ
+            </div>
+          </div>
+
+          <div class="modern-table-container">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th class="select-column">
+                    <div class="select-all-container">
+                      <input type="checkbox"
+                        class="select-all-checkbox"
+                        [checked]="selectAllTransactions"
+                        [indeterminate]="selectedTransactionIds.size > 0 && !selectAllTransactions"
+                        (change)="toggleSelectAll()"
+                        [disabled]="displayedTransactions.length === 0">
+                      <span class="checkmark"></span>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortBy('transactionId')">
+                    <div class="th-content">
+                      <span>ID</span>
+                      <svg class="sort-icon"
+                        [class]="getSortIcon('transactionId')" width="16"
+                        height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortBy('name')">
+                    <div class="th-content">
+                      <span>ชื่อ-นามสกุล</span>
+                      <svg class="sort-icon" [class]="getSortIcon('name')"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortBy('TotalAmount')">
+                    <div class="th-content">
+                      <span>จำนวนเงิน</span>
+                      <svg class="sort-icon"
+                        [class]="getSortIcon('TotalAmount')" width="16"
+                        height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortBy('seatsCount')">
+                    <div class="th-content">
+                      <span>ที่นั่ง</span>
+                      <svg class="sort-icon" [class]="getSortIcon('seatsCount')"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortBy('Status')">
+                    <div class="th-content">
+                      <span>สถานะ</span>
+                      <svg class="sort-icon" [class]="getSortIcon('Status')"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortBy('CreatedAt')">
+                    <div class="th-content">
+                      <span>วันที่</span>
+                      <svg class="sort-icon" [class]="getSortIcon('CreatedAt')"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="actions-column">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let transaction of displayedTransactions; trackBy: trackByTransaction"
+                  class="transaction-row"
+                  [class.selected]="isTransactionSelected(transaction.transactionId)">
+                  <td class="select-column">
+                    <div class="select-container">
+                      <input type="checkbox"
+                        class="select-checkbox"
+                        [checked]="isTransactionSelected(transaction.transactionId)"
+                        (change)="toggleTransactionSelection(transaction.transactionId)">
+                      <span class="checkmark"></span>
+                    </div>
+                  </td>
+                  <td class="transaction-id">
+                    <div class="id-chip">#{{ transaction.transactionId }}</div>
+                  </td>
+                  <td class="transaction-user">
+                    <div class="user-info">
+                      <div class="user-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                            stroke="currentColor" stroke-width="2" />
+                          <circle cx="12" cy="7" r="4" stroke="currentColor"
+                            stroke-width="2" />
+                        </svg>
+                      </div>
+                      <div class="user-details">
+                        <div class="user-name">{{ transaction.FirstName }} {{
+                          transaction.LastName }}</div>
+                        <div class="user-email">{{ transaction.Email }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="transaction-amount">
+                    <div class="amount-chip">{{
+                      formatPrice(transaction.TotalAmount) }}</div>
+                  </td>
+                  <td class="transaction-seats">
+                    <div class="seats-chip">
+                      <svg width="14" height="14" viewBox="0 0 24 24"
+                        fill="none">
+                        <rect x="3" y="6" width="18" height="12" rx="2"
+                          stroke="currentColor" stroke-width="2" />
+                      </svg>
+                      {{ transaction.seats_data.length }} ที่นั่ง
+                    </div>
+                  </td>
+                  <td class="transaction-status">
+                    <span class="modern-status-badge"
+                      [class]="'status-' + transaction.Status">
+                      <div class="status-indicator"></div>
+                      {{ getStatusText(transaction.Status) }}
+                    </span>
+                  </td>
+                  <td class="transaction-date">
+                    <div class="date-info">
+                      <svg width="14" height="14" viewBox="0 0 24 24"
+                        fill="none">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+                          stroke="currentColor" stroke-width="2" />
+                        <line x1="16" y1="2" x2="16" y2="6"
+                          stroke="currentColor" stroke-width="2" />
+                        <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+                          stroke-width="2" />
+                        <line x1="3" y1="10" x2="21" y2="10"
+                          stroke="currentColor" stroke-width="2" />
+                      </svg>
+                      {{ formatDate(transaction.CreatedAt) }}
+                    </div>
+                  </td>
+                  <td class="transaction-actions">
+                    <div class="actions-group">
+                      <button class="modern-action-btn detail-btn"
+                        (click)="openTransactionDetails(transaction)"
+                        title="ดูรายละเอียด">
+                        <svg width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                            stroke="currentColor" stroke-width="2" />
+                          <circle cx="12" cy="12" r="3" stroke="currentColor"
+                            stroke-width="2" />
+                        </svg>
+                      </button>
+
+                      <button *ngIf="transaction.Status === 2"
+                        class="modern-action-btn approve-btn"
+                        (click)="approveTransaction(transaction.transactionId)"
+                        [disabled]="isProcessing === transaction.transactionId"
+                        title="อนุมัติ">
+                        <svg *ngIf="isProcessing !== transaction.transactionId"
+                          width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <polyline points="20,6 9,17 4,12"
+                            stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div *ngIf="isProcessing === transaction.transactionId"
+                          class="action-spinner"></div>
+                      </button>
+
+                      <button class="modern-action-btn cancel-btn"
+                        (click)="cancelTransaction(transaction.transactionId)"
+                        [disabled]="isProcessing === transaction.transactionId"
+                        title="ยกเลิก">
+                        <svg *ngIf="isProcessing !== transaction.transactionId"
+                          width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <line x1="18" y1="6" x2="6" y2="18"
+                            stroke="currentColor" stroke-width="2" />
+                          <line x1="6" y1="6" x2="18" y2="18"
+                            stroke="currentColor" stroke-width="2" />
+                        </svg>
+                        <div *ngIf="isProcessing === transaction.transactionId"
+                          class="action-spinner"></div>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modern-pagination" *ngIf="pagination.totalPages > 1">
+            <div class="pagination-info">
+              หน้า {{ pagination.currentPage }} จาก {{ pagination.totalPages }}
+            </div>
+
+            <div class="pagination-controls">
+              <button
+                class="pagination-btn prev-btn"
+                (click)="changePage(pagination.currentPage - 1)"
+                [disabled]="pagination.currentPage <= 1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="15,18 9,12 15,6" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                ก่อนหน้า
+              </button>
+
+              <div class="pagination-numbers">
+                <button
+                  *ngFor="let page of getPageNumbers()"
+                  class="pagination-number"
+                  [class.active]="page === pagination.currentPage"
+                  (click)="changePage(page)">
+                  {{ page }}
+                </button>
+              </div>
+
+              <button
+                class="pagination-btn next-btn"
+                (click)="changePage(pagination.currentPage + 1)"
+                [disabled]="pagination.currentPage >= pagination.totalPages">
+                ถัดไป
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="9,18 15,12 9,6" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loadingStates.transactions && !errorStates.transactions && displayedTransactions.length === 0"
+          class="no-transactions">
+          <div class="no-data-illustration">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+                stroke="currentColor" stroke-width="1.5" />
+              <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
+                stroke-width="1.5" />
+              <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+                stroke-width="1.5" />
+              <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
+                stroke-width="1.5" />
+              <path
+                d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+          <h3>ไม่พบรายการจอง</h3>
+          <p>ไม่มีรายการจองที่ตรงกับเงื่อนไขการค้นหา</p>
+          <button class="clear-filters-btn" (click)="clearFilters()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            ล้างตัวกรอง
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'seat-logs'" class="seat-logs-section">
+        <div class="seat-logs-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="3" stroke="currentColor"
+                stroke-width="2" />
+              <path
+                d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"
+                stroke="currentColor" stroke-width="2" />
+            </svg>
+            ประวัติการเปลี่ยนแปลงที่นั่ง
+          </h2>
+
+          <div class="logs-summary">
+            <div class="summary-item">
+              <span class="summary-label">ทั้งหมด:</span>
+              <span class="summary-value">{{ seatLogsPagination.totalItems
+                }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">แสดง:</span>
+              <span class="summary-value">{{ displayedSeatLogs.length }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="seat-logs-controls">
+          <div class="search-section">
+            <div class="advanced-search-container">
+              <div class="search-bar">
+                <div class="search-input-wrapper">
+                  <svg class="search-icon" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor"
+                      stroke-width="2" />
+                    <path d="M21 21l-4.35-4.35" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  <input
+                    type="text"
+                    [(ngModel)]="seatLogsSearchQuery"
+                    (input)="onSeatLogsSearchChange()"
+                    placeholder="ค้นหา Log ID, ชื่อผู้ใช้, โซน, ข้อความ..."
+                    class="search-input">
+                  <button
+                    *ngIf="seatLogsSearchQuery"
+                    (click)="seatLogsSearchQuery = ''; onSeatLogsSearchChange()"
+                    class="clear-search-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                        stroke-width="2" />
+                      <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                        stroke-width="2" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="search-actions">
+                <button class="filter-toggle-btn"
+                  (click)="toggleSeatLogsFilters()"
+                  [class.active]="showSeatLogsFilters">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"
+                      stroke="currentColor" stroke-width="2"
+                      stroke-linejoin="round" />
+                  </svg>
+                  ตัวกรอง
+                  <span
+                    *ngIf="seatLogsFilterOptions.dateFrom || seatLogsFilterOptions.dateTo || seatLogsFilterOptions.zone || seatLogsFilterOptions.user || seatLogsFilterOptions.action"
+                    class="filter-indicator"></span>
+                </button>
+
+                <button class="clear-filters-btn"
+                  (click)="clearSeatLogsFilters()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                      stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  ล้างตัวกรอง
+                </button>
+              </div>
+            </div>
+
+            <div class="filters-panel" [class.expanded]="showSeatLogsFilters">
+              <div class="filters-grid">
+                <div class="filter-group">
+                  <label class="filter-label">ช่วงวันที่</label>
+                  <div class="date-range">
+                    <input
+                      type="date"
+                      [(ngModel)]="seatLogsFilterOptions.dateFrom"
+                      (change)="onSeatLogsFilterChange()"
+                      class="date-input">
+                    <span class="date-separator">ถึง</span>
+                    <input
+                      type="date"
+                      [(ngModel)]="seatLogsFilterOptions.dateTo"
+                      (change)="onSeatLogsFilterChange()"
+                      class="date-input">
+                  </div>
+                </div>
+
+                <div class="filter-group">
+                  <label class="filter-label">โซน</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="seatLogsFilterOptions.zone"
+                    (input)="onSeatLogsFilterChange()"
+                    placeholder="เช่น A1, B2..."
+                    class="zone-input">
+                </div>
+
+                <div class="filter-group">
+                  <label class="filter-label">ผู้ใช้</label>
+                  <input
+                    type="text"
+                    [(ngModel)]="seatLogsFilterOptions.user"
+                    (input)="onSeatLogsFilterChange()"
+                    placeholder="ชื่อผู้ใช้..."
+                    class="user-input">
+                </div>
+
+                <div class="filter-group">
+                  <label class="filter-label">ประเภทการกระทำ</label>
+                  <select
+                    [(ngModel)]="seatLogsFilterOptions.action"
+                    (change)="onSeatLogsFilterChange()"
+                    class="action-select">
+                    <option *ngFor="let actionType of actionTypes"
+                      [value]="actionType.value">
+                      {{ actionType.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="loadingStates.seatLogs" class="seat-logs-loading-section">
+          <app-skeleton-table [columns]="seatLogsSkeletonColumns"
+            [rowCount]="seatLogsPagination.itemsPerPage"></app-skeleton-table>
+        </div>
+
+        <div *ngIf="errorStates.seatLogs && !loadingStates.seatLogs"
+          class="error-section">
+          <div class="error-content">
+            <div class="error-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor"
+                  stroke-width="2" />
+                <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor"
+                  stroke-width="2" />
+              </svg>
+            </div>
+            <p>{{ errorStates.seatLogs }}</p>
+            <button class="retry-btn" (click)="loadSeatLogs()">ลองใหม่</button>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loadingStates.seatLogs && !errorStates.seatLogs && displayedSeatLogs.length > 0"
+          class="seat-logs-table-section">
+          <div class="table-controls">
+            <div class="items-per-page">
+              <label>แสดง</label>
+              <select [(ngModel)]="seatLogsPagination.itemsPerPage"
+                (change)="changeSeatLogsItemsPerPage(seatLogsPagination.itemsPerPage)"
+                class="items-select">
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+              <span>รายการต่อหน้า</span>
+            </div>
+
+            <div class="table-info">
+              แสดง {{ getSeatLogsPaginationStartIndex() }} -
+              {{ getSeatLogsPaginationEndIndex() }}
+              จาก {{ seatLogsPagination.totalItems }} รายการ
+            </div>
+          </div>
+
+          <div class="modern-table-container">
+            <table class="modern-table seat-logs-table">
+              <thead>
+                <tr>
+                  <th class="sortable" (click)="sortSeatLogsBy('logId')">
+                    <div class="th-content">
+                      <span>Log ID</span>
+                      <svg class="sort-icon"
+                        [class]="getSeatLogsSortIcon('logId')" width="16"
+                        height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortSeatLogsBy('user')">
+                    <div class="th-content">
+                      <span>ผู้ดำเนินการ</span>
+                      <svg class="sort-icon"
+                        [class]="getSeatLogsSortIcon('user')" width="16"
+                        height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortSeatLogsBy('message')">
+                    <div class="th-content">
+                      <span>การกระทำ</span>
+                      <svg class="sort-icon"
+                        [class]="getSeatLogsSortIcon('message')" width="16"
+                        height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortSeatLogsBy('seatsCount')">
+                    <div class="th-content">
+                      <span>ที่นั่ง</span>
+                      <svg class="sort-icon"
+                        [class]="getSeatLogsSortIcon('seatsCount')" width="16"
+                        height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="sortable" (click)="sortSeatLogsBy('At')">
+                    <div class="th-content">
+                      <span>เวลา</span>
+                      <svg class="sort-icon" [class]="getSeatLogsSortIcon('At')"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th class="actions-column">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let log of displayedSeatLogs; trackBy: trackBySeatLog"
+                  class="seat-log-row">
+                  <td class="log-id">
+                    <div class="id-chip">#{{ log.logId }}</div>
+                  </td>
+                  <td class="log-user">
+                    <div class="user-info">
+                      <div class="user-avatar" [class.admin]="log.isAdmin">
+                        <svg width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                            stroke="currentColor" stroke-width="2" />
+                          <circle cx="12" cy="7" r="4" stroke="currentColor"
+                            stroke-width="2" />
+                        </svg>
+                      </div>
+                      <div class="user-details">
+                        <div class="user-name">
+                          {{ log.firstName }} {{ log.lastName }}
+                          <span *ngIf="log.isAdmin"
+                            class="admin-badge">Admin</span>
+                        </div>
+                        <div class="user-id">User ID: {{ log.userId }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="log-action">
+                    <span class="action-badge"
+                      [class]="getActionTypeClass(log.message)">
+                      <div class="action-indicator"></div>
+                      {{ getActionTypeText(log.message) }}
+                    </span>
+                  </td>
+                  <td class="log-seats">
+                    <div class="seats-summary">
+                      <svg width="14" height="14" viewBox="0 0 24 24"
+                        fill="none">
+                        <rect x="3" y="6" width="18" height="12" rx="2"
+                          stroke="currentColor" stroke-width="2" />
+                      </svg>
+                      {{ log.seats_data.length }} ที่นั่ง
+                      <div class="zones-list">
+                        <span *ngFor="let seat of log.seats_data.slice(0, 3)"
+                          class="zone-tag">
+                          {{ seat.zone }}{{ seat.row }}{{ seat.column }}
+                        </span>
+                        <span *ngIf="log.seats_data.length > 3"
+                          class="more-zones">
+                          +{{ log.seats_data.length - 3 }}
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="log-time">
+                    <div class="time-info">
+                      <svg width="14" height="14" viewBox="0 0 24 24"
+                        fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor"
+                          stroke-width="2" />
+                        <polyline points="12,6 12,12 16,14"
+                          stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      {{ formatDate(log.At) }}
+                    </div>
+                  </td>
+                  <td class="log-actions">
+                    <div class="actions-group">
+                      <button class="modern-action-btn detail-btn"
+                        (click)="openSeatLogDetails(log)" title="ดูรายละเอียด">
+                        <svg width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                            stroke="currentColor" stroke-width="2" />
+                          <circle cx="12" cy="12" r="3" stroke="currentColor"
+                            stroke-width="2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modern-pagination"
+            *ngIf="seatLogsPagination.totalPages > 1">
+            <div class="pagination-info">
+              หน้า {{ seatLogsPagination.currentPage }} จาก {{
+              seatLogsPagination.totalPages }}
+            </div>
+
+            <div class="pagination-controls">
+              <button
+                class="pagination-btn prev-btn"
+                (click)="changeSeatLogsPage(seatLogsPagination.currentPage - 1)"
+                [disabled]="seatLogsPagination.currentPage <= 1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="15,18 9,12 15,6" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+                ก่อนหน้า
+              </button>
+
+              <div class="pagination-numbers">
+                <button
+                  *ngFor="let page of getSeatLogsPageNumbers()"
+                  class="pagination-number"
+                  [class.active]="page === seatLogsPagination.currentPage"
+                  (click)="changeSeatLogsPage(page)">
+                  {{ page }}
+                </button>
+              </div>
+
+              <button
+                class="pagination-btn next-btn"
+                (click)="changeSeatLogsPage(seatLogsPagination.currentPage + 1)"
+                [disabled]="seatLogsPagination.currentPage >= seatLogsPagination.totalPages">
+                ถัดไป
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <polyline points="9,18 15,12 9,6" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          *ngIf="!loadingStates.seatLogs && !errorStates.seatLogs && displayedSeatLogs.length === 0"
+          class="no-seat-logs">
+          <div class="no-data-illustration">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="3" stroke="currentColor"
+                stroke-width="1.5" />
+              <path
+                d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"
+                stroke="currentColor" stroke-width="1.5" />
+            </svg>
+          </div>
+          <h3>ไม่พบประวัติการเปลี่ยนแปลง</h3>
+          <p>ไม่มีประวัติการเปลี่ยนแปลงที่นั่งที่ตรงกับเงื่อนไขการค้นหา</p>
+          <button class="clear-filters-btn" (click)="clearSeatLogsFilters()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+            ล้างตัวกรอง
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="zone-details-modal" [class.show]="showZoneDetailsModal"
+  (click)="closeZoneDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>รายละเอียดโซน {{ selectedZone?.ZONE }}</h3>
+      <button class="modal-close-btn" (click)="closeZoneDetails()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+            stroke-width="2" />
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+            stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="selectedZone">
+      <div class="zone-info-grid">
+        <div class="info-card">
+          <h4>ที่นั่งทั้งหมด</h4>
+          <p class="info-value">{{ selectedZone.Max }}</p>
+        </div>
+        <div class="info-card">
+          <h4>ที่นั่งว่าง</h4>
+          <p class="info-value available">{{ selectedZone.Available }}</p>
+        </div>
+        <div class="info-card">
+          <h4>จองแล้ว</h4>
+          <p class="info-value booked">{{ selectedZone.Max -
+            selectedZone.Available }}</p>
+        </div>
+        <div class="info-card">
+          <h4>อัตราการจอง</h4>
+          <p class="info-value">{{ getOccupancyPercentage(selectedZone) }}%</p>
+        </div>
+      </div>
+      <div class="zone-chart">
+        <div class="progress-chart">
+          <div class="chart-bar">
+            <div class="bar-fill"
+              [style.width.%]="getOccupancyPercentage(selectedZone)"></div>
+          </div>
+          <div class="chart-labels">
+            <span class="label-left">{{ selectedZone.Available }} ที่ว่าง</span>
+            <span class="label-right">{{ selectedZone.Max -
+              selectedZone.Available }} ที่จอง</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="transaction-details-modal"
+  [class.show]="showTransactionDetailsModal"
+  (click)="closeTransactionDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>รายละเอียดการจอง #{{ selectedTransaction?.transactionId }}</h3>
+      <button class="modal-close-btn" (click)="closeTransactionDetails()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+            stroke-width="2" />
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+            stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="selectedTransaction">
+      <div class="transaction-info-section">
+        <h4>ข้อมูลลูกค้า</h4>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>ชื่อ-นามสกุล:</label>
+            <span>{{ selectedTransaction.FirstName }} {{
+              selectedTransaction.LastName }}</span>
+          </div>
+          <div class="info-item">
+            <label>อีเมล:</label>
+            <span>{{ selectedTransaction.Email }}</span>
+          </div>
+          <div class="info-item">
+            <label>เบอร์โทร:</label>
+            <span>{{ selectedTransaction.Phone }}</span>
+          </div>
+          <div class="info-item">
+            <label>ที่อยู่:</label>
+            <span>{{ selectedTransaction.Address }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-info-section">
+        <h4>ข้อมูลการจอง</h4>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>จำนวนเงิน:</label>
+            <span class="amount">{{ formatPrice(selectedTransaction.TotalAmount)
+              }}</span>
+          </div>
+          <div class="info-item">
+            <label>สถานะ:</label>
+            <span class="modern-status-badge"
+              [class]="'status-' + selectedTransaction.Status">
+              <div class="status-indicator"></div>
+              {{ getStatusText(selectedTransaction.Status) }}
+            </span>
+          </div>
+          <div class="info-item">
+            <label>วันที่จอง:</label>
+            <span>{{ formatDate(selectedTransaction.CreatedAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="seats-info-section">
+        <h4>ที่นั่งที่จอง</h4>
+        <div class="seats-grid">
+          <div
+            *ngFor="let seat of selectedTransaction.seats_data; trackBy: trackBySeat"
+            class="modern-seat-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="18" height="12" rx="2"
+                stroke="currentColor" stroke-width="2" />
+            </svg>
+            {{ seat.zone }}{{ seat.row }}{{ seat.display || seat.column }}
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="selectedTransaction.BillURL && (selectedTransaction.Status === 2 || selectedTransaction.Status === 3)"
+        class="bill-section">
+        <h4>สลิปการโอนเงิน</h4>
+        <div class="bill-container">
+          <img [src]="selectedTransaction.BillURL" alt="สลิปการโอนเงิน"
+            class="bill-image"
+            (click)="openImageModal(selectedTransaction.BillURL)">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="seat-log-details-modal" [class.show]="showSeatLogDetailsModal"
+  (click)="closeSeatLogDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>รายละเอียดประวัติ #{{ selectedSeatLog?.logId }}</h3>
+      <button class="modal-close-btn" (click)="closeSeatLogDetails()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+            stroke-width="2" />
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+            stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="selectedSeatLog">
+      <div class="log-info-section">
+        <h4>ข้อมูลผู้ดำเนินการ</h4>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>ชื่อ-นามสกุล:</label>
+            <span>
+              {{ selectedSeatLog.firstName }} {{ selectedSeatLog.lastName }}
+              <span *ngIf="selectedSeatLog.isAdmin"
+                class="admin-badge">Admin</span>
+            </span>
+          </div>
+          <div class="info-item">
+            <label>User ID:</label>
+            <span>{{ selectedSeatLog.userId }}</span>
+          </div>
+          <div class="info-item">
+            <label>การกระทำ:</label>
+            <span class="action-badge"
+              [class]="getActionTypeClass(selectedSeatLog.message)">
+              <div class="action-indicator"></div>
+              {{ getActionTypeText(selectedSeatLog.message) }}
+            </span>
+          </div>
+          <div class="info-item">
+            <label>เวลาที่ดำเนินการ:</label>
+            <span>{{ formatDate(selectedSeatLog.At) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="log-action-section">
+        <h4>รายละเอียดการกระทำ</h4>
+        <div class="action-message">
+          <div class="message-container">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="currentColor"
+                stroke-width="2" />
+              <path d="M12 16v-4M12 8h.01" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" />
+            </svg>
+            {{ selectedSeatLog.message }}
+          </div>
+        </div>
+      </div>
+
+      <div class="affected-seats-section">
+        <h4>ที่นั่งที่ได้รับผลกระทบ</h4>
+        <div class="seats-grid">
+          <div
+            *ngFor="let seat of selectedSeatLog.seats_data; trackBy: trackBySeat"
+            class="seat-log-item">
+            <div class="seat-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="6" width="18" height="12" rx="2"
+                  stroke="currentColor" stroke-width="2" />
+              </svg>
+            </div>
+            <div class="seat-details">
+              <div class="seat-location">{{ seat.zone }}{{ seat.row }}{{
+                seat.column }}</div>
+              <div class="seat-level">Level {{ seat.level }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="image-modal-overlay" [class.show]="showImageModal"
+  (click)="closeImageModal()">
+  <div class="image-modal-content" (click)="$event.stopPropagation()">
+    <button class="modal-close-btn" (click)="closeImageModal()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+          stroke-width="2" />
+        <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+          stroke-width="2" />
+      </svg>
+    </button>
+    <img [src]="selectedImageUrl" alt="สลิปการโอนเงิน" class="modal-image">
+  </div>
+</div>
+
+<app-error-boundary
+  *ngIf="errorStates.global"
+  [hasError]="errorStates.global"
+  [errorTitle]="errorStates.globalTitle"
+  [errorMessage]="errorStates.globalMessage"
+  [errorStack]="errorStates.globalStack"
+  [retryCount]="retryCount"
+  [maxRetries]="MAX_RETRIES"
+  (retry)="onGlobalRetry()">
+</app-error-boundary>
+
+<app-confirmation
+  [show]="showConfirmation"
+  [title]="confirmationData.title"
+  [message]="confirmationData.message"
+  [confirmText]="confirmationData.confirmText"
+  [cancelText]="confirmationData.cancelText"
+  [isProcessing]="isProcessing !== null"
+  [confirmationType]="confirmationData.confirmationType || 'danger'"
+  (confirmed)="onConfirmationConfirmed()"
+  (cancelled)="onConfirmationCancelled()"
+  (closed)="onConfirmationCancelled()">
+</app-confirmation>

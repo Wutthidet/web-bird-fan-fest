@@ -1,0 +1,196 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(27, 38, 44, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(50, 130, 184, 0.2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(27, 38, 44, 0.95);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #BBE1FA;
+    font-weight: 700;
+    font-size: 1.5rem;
+
+    .logo-text {
+      background: linear-gradient(135deg, #3282B8, #BBE1FA);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .auth-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .login-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(145deg, #3282B8, #BBE1FA);
+      color: #1B262C;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.9rem;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(50, 130, 184, 0.4);
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .admin-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #28a745;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: rgba(40, 167, 69, 0.1);
+        border-radius: 25px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(40, 167, 69, 0.2);
+
+        &:hover {
+          background: rgba(40, 167, 69, 0.2);
+          color: #20c997;
+          transform: translateY(-1px);
+          border-color: rgba(40, 167, 69, 0.4);
+          box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+
+        svg {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #3282B8;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background: rgba(50, 130, 184, 0.1);
+        border-radius: 25px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(50, 130, 184, 0.2);
+          color: #BBE1FA;
+          transform: translateY(-1px);
+        }
+
+        svg {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .logout-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff6b6b;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 107, 107, 0.3);
+          transform: scale(1.1);
+        }
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1rem;
+    }
+
+    .auth-section {
+      .login-btn span,
+      .user-info span {
+        display: none;
+      }
+
+      .login-btn {
+        padding: 0.5rem;
+        min-width: 40px;
+        justify-content: center;
+      }
+
+      .user-info {
+        padding: 0.5rem;
+        min-width: 40px;
+        justify-content: center;
+      }
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .logo {
+      font-size: 1.2rem;
+    }
+
+    .auth-section {
+      gap: 0.5rem;
+    }
+  }
+}
