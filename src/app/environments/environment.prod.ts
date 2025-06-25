@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.birdfanfestival.com/api',
+  apiUrl: 'https://aticket-api.ampolfood.com/api',
   imgbb: {
     apiUrl: 'https://api.imgbb.com/1/upload',
     apiKey: '62e768cda1cad5a0b7e3930058a3a561'

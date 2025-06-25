@@ -1,0 +1,94 @@
+.svg-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  svg {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    display: block;
+  }
+
+  .zone-path {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    stroke-width: 1;
+
+    &.inner {
+      &:hover {
+        opacity: 0.8;
+        stroke-width: 2;
+        filter: drop-shadow(0 0 10px rgba(72, 185, 235, 0.5));
+      }
+
+      &.clicked {
+        opacity: 0.9;
+        stroke-width: 3;
+        filter: drop-shadow(0 0 15px rgba(72, 185, 235, 0.7));
+      }
+    }
+
+    &.middle {
+      &:hover {
+        opacity: 0.8;
+        stroke-width: 2;
+        filter: drop-shadow(0 0 10px rgba(50, 130, 184, 0.5));
+      }
+
+      &.clicked {
+        opacity: 0.9;
+        stroke-width: 3;
+        filter: drop-shadow(0 0 15px rgba(50, 130, 184, 0.7));
+      }
+    }
+
+    &.outer {
+      &:hover {
+        opacity: 0.8;
+        stroke-width: 2;
+        filter: drop-shadow(0 0 10px rgba(187, 225, 250, 0.5));
+      }
+
+      &.clicked {
+        opacity: 0.9;
+        stroke-width: 3;
+        filter: drop-shadow(0 0 15px rgba(187, 225, 250, 0.7));
+      }
+    }
+  }
+
+  .background-shape {
+    fill: rgba(200, 200, 200, 0.1);
+    stroke: #666;
+    stroke-width: 1;
+    pointer-events: none;
+  }
+
+  .zone-label {
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+
+    &.inner-label {
+      fill: #48b9eb;
+      font-size: 16px;
+    }
+
+    &.middle-label {
+      fill: #3282B8;
+      font-size: 14px;
+    }
+
+    &.outer-label {
+      fill: #BBE1FA;
+      font-size: 13px;
+    }
+  }
+}

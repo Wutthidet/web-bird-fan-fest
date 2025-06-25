@@ -1,0 +1,124 @@
+.price-card {
+  background: rgba(27, 38, 44, 0.3);
+  border-radius: 15px;
+  border: 1px solid rgba(50, 130, 184, 0.2);
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+
+  .card-title {
+    color: #BBE1FA;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+    background: linear-gradient(135deg, #3282B8, #BBE1FA);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .price-zones {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .price-zone-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(15, 76, 117, 0.2);
+      border-radius: 10px;
+      border: 1px solid rgba(50, 130, 184, 0.1);
+
+      .zone-indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        flex-shrink: 0;
+
+        &.inner {
+          background: #48b9eb;
+        }
+
+        &.middle {
+          background: #3282B8;
+        }
+
+        &.outer {
+          background: #BBE1FA;
+        }
+      }
+
+      .zone-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        .zone-name {
+          color: #BBE1FA;
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        .zone-price {
+          color: #3282B8;
+          font-size: 13px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .price-card {
+    .card-title {
+      font-size: 1rem;
+    }
+
+    .price-zones {
+      .price-zone-item {
+        padding: 0.6rem;
+
+        .zone-indicator {
+          width: 18px;
+          height: 18px;
+        }
+
+        .zone-info {
+          .zone-name {
+            font-size: 13px;
+          }
+
+          .zone-price {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .price-card {
+    .card-title {
+      font-size: 1.1rem;
+    }
+
+    .price-zones {
+      .price-zone-item {
+        .zone-info {
+          .zone-name {
+            font-size: 12px;
+          }
+
+          .zone-price {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+}

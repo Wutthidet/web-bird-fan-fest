@@ -1,20 +1,59 @@
-<div class="intro-container" [class.slide-out]="isAnimating">
+<div class="intro-container" [class.slide-out]="isSlideOut"
+  (click)="onEnterWebsite()">
+
+  <div class="loading-screen" [class.show]="isAnimating">
+    <div class="loading-content">
+      <div class="bird-container">
+        <svg class="animated-bird" viewBox="0 0 100 100"
+          xmlns="http://www.w3.org/2000/svg">
+          <g class="bird-body">
+            <ellipse cx="35" cy="40" rx="12" ry="10" fill="#da3830" />
+            <circle cx="30" cy="37" r="2" fill="white" />
+            <circle cx="29" cy="36" r="1" fill="black" />
+            <polygon points="22,40 15,42 22,44" fill="#d4af37" />
+            <ellipse cx="50" cy="45" rx="18" ry="12" fill="#da3830" />
+            <ellipse cx="75" cy="50" rx="12" ry="8" fill="#b82e26" />
+          </g>
+
+          <g class="wings">
+            <ellipse class="wing wing-1" cx="45" cy="35" rx="15" ry="8"
+              fill="#b82e26" />
+            <ellipse class="wing wing-2" cx="55" cy="38" rx="12" ry="6"
+              fill="#992419" />
+          </g>
+        </svg>
+      </div>
+
+      <div class="loading-text">
+        <h2>Bird Fan Festival 20XX</h2>
+        <p>กำลังโหลด...</p>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="particles">
+      <div class="particle"
+        *ngFor="let particle of particles; trackBy: trackParticle"
+        [style.left.%]="particle.x"
+        [style.top.%]="particle.y"
+        [style.animation-delay.s]="particle.delay">
+      </div>
+    </div>
+  </div>
+
   <div class="slideshow-container">
     <div class="slide slide-1 active"></div>
   </div>
+
   <div class="overlay"></div>
+
   <div class="content">
-    <button class="enter-btn" [class.clicked]="isAnimating"
-      (click)="onEnterWebsite()">
-      <span class="btn-text">เข้าสู่เว็บไซต์</span>
-      <div class="btn-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round" />
-        </svg>
-      </div>
-    </button>
+    <div class="poster-text">
+      <p>คลิกที่ไหนก็ได้เพื่อเข้าสู่ระบบจองที่นั่ง</p>
+    </div>
   </div>
 </div>

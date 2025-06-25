@@ -1,0 +1,11 @@
+<div class="price-card">
+  <h3 class="card-title">TICKET PRICE</h3>
+  <div class="price-zones">
+    <div *ngFor="let priceItem of priceItems; trackBy: trackByPriceItem" class="price-zone-item">
+      <div class="zone-indicator" [ngStyle]="{ 'background-color': priceItem.color }"></div>
+      <div class="zone-info">
+        <span class="zone-price">{{ formatPrice(priceItem.price) }}</span>
+      </div>
+    </div>
+  </div>
+</div>

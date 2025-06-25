@@ -1,0 +1,335 @@
+<div class="svg-wrapper">
+  <svg #svgMap width="1200" height="1400" viewBox="430 400 1070 350">
+    <path class="background-shape" d="M860 210.5H744V575L913.5 477C899.5 441 929 418.667 945.5 412V232.5L860 210.5Z" stroke="black" />
+    <path class="background-shape" d="M1051.5 208.5L971 230L972.5 412C1011.7 424.8 1010.83 460.333 1005.5 476.5L1172.5 574V208.5H1051.5Z" stroke="black" />
+    <path class="background-shape" d="M996.5 493C969.3 522.2 934.5 505.167 920.5 493L743.5 595.5V618.5L790.5 695.5L868.5 740.5H1049L1127.5 693.5L1171.5 618.5V595.5L996.5 493Z" stroke="black" />
+    <path class="background-shape" d="M693 171H727L723.5 620L778.5 709L862 757H1055L1140.5 706L1193.5 621V171H1224V47H693V171Z" stroke="black" />
+
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'B'" data-zone="B" d="M482.5 292V283L630.5 236V265H621V274H560.5V292H482.5Z" fill="#ED2324" stroke="black" (click)="onZoneClick('B')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'C'" data-zone="C" d="M571 305.5H475V414.5H570V395L630 394V325H571V305.5Z" fill="url(#paint0_linear)" stroke="black" (click)="onZoneClick('C')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'D'" data-zone="D" d="M571 429H475V538H570V518.5L630 517.5V448.5H571V429Z" fill="url(#paint1_linear)" stroke="black" (click)="onZoneClick('D')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'E'" data-zone="E" d="M566.5 554H475L477 681L629.5 640.5V575H566.5V554Z" fill="url(#paint2_linear)" stroke="black" (click)="onZoneClick('E')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'F'" data-zone="F" d="M494.5 688.5L467 699.5L464 732L505.5 799L607 741L583 699.5C600.667 690.167 636 671.1 636 669.5C636 667.9 628.333 659.5 624.5 655.5L528.5 682L494.5 688.5Z" fill="url(#paint3_linear)" stroke="black" (click)="onZoneClick('F')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'G'" data-zone="G" d="M614.5 755L519.5 810L575.5 905L698.5 778L689.5 764L641 798.5L614.5 755Z" fill="url(#paint4_linear)" stroke="black" (click)="onZoneClick('G')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'H'" data-zone="H" d="M708 791L578.5 923L677 979L735 876.5L689.5 850.5L725 799.5L708 791Z" fill="url(#paint5_linear)" stroke="black" (click)="onZoneClick('H')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'I'" data-zone="I" d="M744.5 882L684 985.5L764.5 1033H783.5L829.5 863L815.5 854L788.5 907L744.5 882Z" fill="#3F63A5" stroke="black" (click)="onZoneClick('I')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'J'" data-zone="J" d="M859 866.5H843.5L801 1033H874V1014.5H854.5V1001H912.5V910.5H859V866.5Z" fill="#3F63A5" stroke="black" (click)="onZoneClick('J')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'K'" data-zone="K" d="M985.5 866.5H931V1000.5H923.5V1032H994.5V1000.5H985.5V866.5Z" fill="#3F63A5" stroke="black" (click)="onZoneClick('K')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'L'" data-zone="L" d="M1058.5 909.5H1004V1002H1065V1016H1045V1032H1118.5L1074.5 866H1058.5V909.5Z" fill="#3F63A5" stroke="black" (click)="onZoneClick('L')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'M'" data-zone="M" d="M1101.5 853.5L1089.5 862.5L1134 1031.5H1154.5L1233 983.5L1174.5 882.5L1130 907.5L1101.5 853.5Z" fill="#3F63A5" stroke="black" (click)="onZoneClick('M')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'N'" data-zone="N" d="M1214 790.5L1197 799L1232.5 849.5L1186.5 877L1245.5 979L1342 922L1287.5 862L1214 790.5Z" fill="url(#paint6_linear)" stroke="black" (click)="onZoneClick('N')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'O'" data-zone="O" d="M1231.5 763.5L1222.5 778.5L1347.5 905.5L1403.5 809.5L1307 755L1281.5 797.5L1231.5 763.5Z" fill="url(#paint7_linear)" stroke="black" (click)="onZoneClick('O')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'P'" data-zone="P" d="M1295 654.5L1285 670.5L1340 699L1313.5 741.5L1349.5 760.5L1418 800L1458.5 733.5L1455.5 701L1427.5 689L1393.5 683L1295 654.5Z" fill="url(#paint8_linear)" stroke="black" (click)="onZoneClick('P')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'Q'" data-zone="Q" d="M1354.5 574.5H1291.5V639L1445 680.5V554H1354.5V574.5Z" fill="url(#paint9_linear)" stroke="black" (click)="onZoneClick('Q')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'R'" data-zone="R" d="M1446.5 428.5H1351.5V449H1292.5V516L1351.5 518.5V538.5H1446.5V428.5Z" fill="url(#paint10_linear)" stroke="black" (click)="onZoneClick('R')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'S'" data-zone="S" d="M1350.5 325H1292L1290.5 393.5L1350.5 395V415H1447.5V304H1350.5V325Z" fill="url(#paint11_linear)" stroke="black" (click)="onZoneClick('S')" />
+    <path class="zone-path outer" [class.clicked]="currentSelectedZone === 'T'" data-zone="T" d="M1436.5 281.5L1289 234V263.5H1296V273H1357.5V290.5H1436.5V281.5Z" fill="#ED2324" stroke="black" (click)="onZoneClick('T')" />
+
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SB'" data-zone="SB" d="M652.5 285V234.5H718.5V285H652.5Z" fill="#959397" stroke="black" (click)="onZoneClick('SB')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SC'" data-zone="SC" d="M718.5 307.5H652.5V409H718.5V307.5Z" fill="url(#paint12_linear)" stroke="black" (click)="onZoneClick('SC')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SD'" data-zone="SD" d="M719 433H653V534.5H719V433Z" fill="url(#paint13_linear)" stroke="black" (click)="onZoneClick('SD')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SE'" data-zone="SE" d="M718 552H651.5V638L683.5 692L741.5 657.5L718 620.5V552Z" stroke="black" (click)="onZoneClick('SE')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SF'" data-zone="SF" d="M748.5 672L692.5 707L722.5 761L776 790.5L810.5 734L771.5 709.5L748.5 672Z" stroke="black" (click)="onZoneClick('SF')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SG'" data-zone="SG" d="M859 763.5L822.5 741L789 799L844 831H890.5V763.5H859Z" stroke="black" (click)="onZoneClick('SG')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SH'" data-zone="SH" d="M1006.5 764H909.5V831H1006.5V764Z" fill="url(#paint17_linear)" stroke="black" (click)="onZoneClick('SH')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SI'" data-zone="SI" d="M1056.5 763H1024.5V831H1073L1127.5 798L1093 741.5L1056.5 763Z" stroke="black" (click)="onZoneClick('SI')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SJ'" data-zone="SJ" d="M1143.5 711L1105.5 734L1141.5 791.5L1194.5 760.5L1222.5 706L1166.5 671L1143.5 711Z"stroke="black" (click)="onZoneClick('SJ')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SK'" data-zone="SK" d="M1263.5 551.5H1197V621L1175 658L1234 691.5L1263.5 637.5V551.5Z" stroke="black" (click)="onZoneClick('SK')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SL'" data-zone="SL" d="M1264.5 432H1198.5V534.5H1264.5V432Z" fill="url(#paint21_linear)" stroke="black" (click)="onZoneClick('SL')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SM'" data-zone="SM" d="M1265.5 307.5H1198L1200 410.5H1265.5V307.5Z" fill="url(#paint22_linear)" stroke="black" (click)="onZoneClick('SM')" />
+    <path class="zone-path middle" [class.clicked]="currentSelectedZone === 'SN'" data-zone="SN" d="M1265.5 234.5H1198.5V286H1265.5V234.5Z" fill="#959397" stroke="black" (click)="onZoneClick('SN')" />
+
+    <g clip-path="url(#paint14_diamond_1_69_clip_path)" class="zone-path middle" [class.clicked]="currentSelectedZone === 'SF'" data-zone="SF" (click)="onZoneClick('SE')">
+      <g transform="matrix(-0.118 0.0365 -0.125292 -0.405055 775 601)">
+        <rect x="0" y="0" width="1183.06" height="199.433" fill="url(#paint14_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1183.06" height="199.433" transform="scale(1 -1)" fill="url(#paint14_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1183.06" height="199.433" transform="scale(-1 1)" fill="url(#paint14_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1183.06" height="199.433" transform="scale(-1)" fill="url(#paint14_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+      </g>
+    </g>
+    <g clip-path="url(#paint15_diamond_1_69_clip_path)" class="zone-path middle" [class.clicked]="currentSelectedZone === 'SF'" data-zone="SF" (click)="onZoneClick('SF')">
+      <g transform="matrix(-0.115 0.119 -0.550686 -0.532175 832 648.5)">
+        <rect x="0" y="0" width="1211.37" height="111.511" fill="url(#paint15_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1211.37" height="111.511" transform="scale(1 -1)" fill="url(#paint15_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1211.37" height="111.511" transform="scale(-1 1)" fill="url(#paint15_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1211.37" height="111.511" transform="scale(-1)" fill="url(#paint15_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+      </g>
+    </g>
+    <g clip-path="url(#paint16_diamond_1_69_clip_path)" class="zone-path middle" [class.clicked]="currentSelectedZone === 'SG'" data-zone="SG" (click)="onZoneClick('SG')">
+      <g transform="matrix(-0.0385 0.135 -0.490655 -0.139928 878.5 705)">
+        <rect x="0" y="0" width="1046.78" height="151.761" fill="url(#paint16_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1046.78" height="151.761" transform="scale(1 -1)" fill="url(#paint16_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1046.78" height="151.761" transform="scale(-1 1)" fill="url(#paint16_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1046.78" height="151.761" transform="scale(-1)" fill="url(#paint16_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+      </g>
+    </g>
+    <g clip-path="url(#paint18_diamond_1_69_clip_path)" class="zone-path middle" [class.clicked]="currentSelectedZone === 'SI'" data-zone="SI" (click)="onZoneClick('SI')">
+      <g transform="matrix(0.0325 0.1165 -0.3961 0.1105 1040.5 720.5)">
+        <rect x="0" y="0" width="1083.48" height="193.056" fill="url(#paint18_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1083.48" height="193.056" transform="scale(1 -1)" fill="url(#paint18_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1083.48" height="193.056" transform="scale(-1 1)" fill="url(#paint18_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1083.48" height="193.056" transform="scale(-1)" fill="url(#paint18_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+      </g>
+    </g>
+    <g clip-path="url(#paint19_diamond_1_69_clip_path)" class="zone-path middle" [class.clicked]="currentSelectedZone === 'SJ'" data-zone="SJ" (click)="onZoneClick('SJ')">
+      <g transform="matrix(0.0845 0.08 -0.269526 0.284687 1107.5 675.5)">
+        <rect x="0" y="0" width="1415.19" height="221.984" fill="url(#paint19_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1415.19" height="221.984" transform="scale(1 -1)" fill="url(#paint19_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1415.19" height="221.984" transform="scale(-1 1)" fill="url(#paint19_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="1415.19" height="221.984" transform="scale(-1)" fill="url(#paint19_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+      </g>
+    </g>
+    <g clip-path="url(#paint20_diamond_1_69_clip_path)" class="zone-path middle" [class.clicked]="currentSelectedZone === 'SK'" data-zone="SK" (click)="onZoneClick('SK')">
+      <g transform="matrix(0.1855 0.046 -0.188541 0.760311 1118.5 598)">
+        <rect x="0" y="0" width="860.477" height="103.715" fill="url(#paint20_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="860.477" height="103.715" transform="scale(1 -1)" fill="url(#paint20_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="860.477" height="103.715" transform="scale(-1 1)" fill="url(#paint20_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+        <rect x="0" y="0" width="860.477" height="103.715" transform="scale(-1)" fill="url(#paint20_diamond_1_69)" opacity="1" shape-rendering="crispEdges" />
+      </g>
+    </g>
+
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'A1'" data-zone="A1" d="M827 242H771.5L760.5 260V398H827V242Z" fill="#0F6E38" stroke="black" (click)="onZoneClick('A1')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'A2'" data-zone="A2" d="M852 239.5L840.5 252L842 396H931V252L894 239.5H852Z" fill="#19BBEC" stroke="black" (click)="onZoneClick('A2')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'A3'" data-zone="A3" d="M1017 240L982.5 252V396.5H1071.5V252L1060.5 240H1017Z" fill="#19BBEC" stroke="black" (click)="onZoneClick('A3')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'A4'" data-zone="A4" d="M1145.5 241.5H1090.5V399H1156V259.5L1145.5 241.5Z" fill="#0F6E38" stroke="black" (click)="onZoneClick('A4')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'B1'" data-zone="B1" d="M824 415H761V535H790L824 514.5V415Z" fill="#C2802A" stroke="black" (click)="onZoneClick('B1')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'B2'" data-zone="B2" d="M909 414.5H841.5V494H863L894 474.5V443L909 422.5V414.5Z" fill="#19BBEC" stroke="black" (click)="onZoneClick('B2')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'B3'" data-zone="B3" d="M1074 414H1006.5V420.5L1022.5 442V474.5L1055.5 494H1074V414Z" fill="#19BBEC" stroke="black" (click)="onZoneClick('B3')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'B4'" data-zone="B4" d="M1154 414.5H1091.5V514L1128 534H1154V414.5Z" fill="#C2802A" stroke="black" (click)="onZoneClick('B4')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'C1'" data-zone="C1" d="M790 580L772.5 613.5V624L788 651H879V541.5H863V551.5H847V561H832V573H812V580H790Z" fill="#C2802A" stroke="black" (click)="onZoneClick('C1')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'C2'" data-zone="C2" d="M907 543H895.5V650H1023V543H1012.5V520.5H979.5V532.5H936.5V520.5H907V543Z" fill="url(#paint23_linear)" stroke="black" (click)="onZoneClick('C2')" />
+    <path class="zone-path inner" [class.clicked]="currentSelectedZone === 'C3'" data-zone="C3" d="M1053.5 541.5H1036V651H1130.5L1144.5 625V613.5L1125 581H1104.5V573H1083.5V564H1069.5V551.5H1053.5V541.5Z" fill="#C2802A" stroke="black" (click)="onZoneClick('C3')" />
+
+    <defs>
+      <linearGradient id="paint0_linear" x1="475" y1="350.13" x2="629.498" y2="350.716" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ED2324" />
+        <stop offset="0.115385" stop-color="#ED2324" />
+        <stop offset="0.115485" stop-color="#F4EE44" />
+        <stop offset="0.293269" stop-color="#F4EE44" />
+        <stop offset="0.293369" stop-color="#3F63A5" />
+      </linearGradient>
+      <linearGradient id="paint1_linear" x1="475" y1="473.63" x2="629.498" y2="474.216" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ED2324" />
+        <stop offset="0.115385" stop-color="#ED2324" />
+        <stop offset="0.115485" stop-color="#F4EE44" />
+        <stop offset="0.293269" stop-color="#F4EE44" />
+        <stop offset="0.293369" stop-color="#3F63A5" />
+      </linearGradient>
+      <linearGradient id="paint2_linear" x1="475" y1="606" x2="629" y2="606.5" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#ED2324" />
+        <stop offset="0.115385" stop-color="#ED2324" />
+        <stop offset="0.115485" stop-color="#F4EE44" />
+        <stop offset="0.293269" stop-color="#F4EE44" />
+        <stop offset="0.293369" stop-color="#3F63A5" />
+      </linearGradient>
+      <linearGradient id="paint3_linear" x1="639" y1="673.5" x2="482.5" y2="760" gradientUnits="userSpaceOnUse">
+        <stop offset="0.596054" stop-color="#3F63A5" />
+        <stop offset="0.596154" stop-color="#F4EE44" />
+        <stop offset="0.773938" stop-color="#F4EE44" />
+        <stop offset="0.774038" stop-color="#ED2324" />
+        <stop offset="1" stop-color="#ED2324" />
+      </linearGradient>
+      <linearGradient id="paint4_linear" x1="688" y1="763" x2="547.5" y2="857" gradientUnits="userSpaceOnUse">
+        <stop offset="0.591246" stop-color="#4265A4" />
+        <stop offset="0.591346" stop-color="#F4EE44" />
+        <stop offset="0.836438" stop-color="#F4EE44" />
+        <stop offset="0.836538" stop-color="#ED2324" />
+        <stop offset="1" stop-color="#ED2324" />
+      </linearGradient>
+      <linearGradient id="paint5_linear" x1="731" y1="773" x2="630" y2="949" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#3F63A5" />
+        <stop offset="0.6249" stop-color="#4366A3" />
+        <stop offset="0.625" stop-color="#F4EE44" />
+        <stop offset="0.836438" stop-color="#F4EE44" />
+        <stop offset="0.836538" stop-color="#495F9E" />
+        <stop offset="0.836638" stop-color="#ED2324" />
+        <stop offset="1" stop-color="#ED2324" />
+      </linearGradient>
+      <linearGradient id="paint6_linear" x1="1208" y1="808" x2="1319" y2="989.5" gradientUnits="userSpaceOnUse">
+        <stop offset="0.408554" stop-color="#3F63A5" />
+        <stop offset="0.408654" stop-color="#F4EE44" />
+        <stop offset="0.605769" stop-color="#F4EE44" />
+        <stop offset="0.61" stop-color="#ED2324" />
+      </linearGradient>
+      <linearGradient id="paint7_linear" x1="1230.5" y1="762" x2="1375" y2="858.5" gradientUnits="userSpaceOnUse">
+        <stop offset="0.610577" stop-color="#3F63A5" />
+        <stop offset="0.610677" stop-color="#F4EE44" />
+        <stop offset="0.826823" stop-color="#F4EE44" />
+        <stop offset="0.826923" stop-color="#ED2324" />
+        <stop offset="1" stop-color="#ED2324" />
+      </linearGradient>
+      <linearGradient id="paint8_linear" x1="1280" y1="671" x2="1444.5" y2="756.5" gradientUnits="userSpaceOnUse">
+        <stop offset="0.605669" stop-color="#3F63A5" />
+        <stop offset="0.605769" stop-color="#F4EE44" />
+        <stop offset="0.778746" stop-color="#F4EE44" />
+        <stop offset="0.778846" stop-color="#ED2324" />
+        <stop offset="1" stop-color="#EE2425" />
+      </linearGradient>
+      <linearGradient id="paint9_linear" x1="1292" y1="601.5" x2="1445" y2="603" gradientUnits="userSpaceOnUse">
+        <stop offset="0.706631" stop-color="#3F63A5" />
+        <stop offset="0.706731" stop-color="#F4EE44" />
+        <stop offset="0.894131" stop-color="#F4EE44" />
+        <stop offset="0.894231" stop-color="#EE2425" />
+        <stop offset="1" stop-color="#EE2425" />
+      </linearGradient>
+      <linearGradient id="paint10_linear" x1="1293" y1="469.804" x2="1446.5" y2="471.541" gradientUnits="userSpaceOnUse">
+        <stop offset="0.706631" stop-color="#3F63A5" />
+        <stop offset="0.706731" stop-color="#F4EE44" />
+        <stop offset="0.894131" stop-color="#F4EE44" />
+        <stop offset="0.894231" stop-color="#EE2425" />
+        <stop offset="1" stop-color="#EE2425" />
+      </linearGradient>
+      <linearGradient id="paint11_linear" x1="1291.01" y1="345.68" x2="1447.49" y2="347.468" gradientUnits="userSpaceOnUse">
+        <stop offset="0.706631" stop-color="#3F63A5" />
+        <stop offset="0.706731" stop-color="#F4EE44" />
+        <stop offset="0.894131" stop-color="#F4EE44" />
+        <stop offset="0.894231" stop-color="#EE2425" />
+        <stop offset="1" stop-color="#EE2425" />
+      </linearGradient>
+      <linearGradient id="paint12_linear" x1="718.5" y1="358.25" x2="652.5" y2="358.25" gradientUnits="userSpaceOnUse">
+        <stop offset="0.326349" stop-color="#B97F32" />
+        <stop offset="0.326764" stop-color="white" />
+        <stop offset="0.446393" stop-color="white" />
+        <stop offset="0.452284" stop-color="#A4509E" />
+        <stop offset="0.707949" stop-color="#A4509E" />
+        <stop offset="0.708629" stop-color="white" />
+        <stop offset="0.792168" stop-color="white" />
+        <stop offset="0.80436" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <linearGradient id="paint13_linear" x1="723.5" y1="484" x2="653" y2="483.75" gradientUnits="userSpaceOnUse">
+        <stop offset="0.341865" stop-color="#B97F32" />
+        <stop offset="0.344855" stop-color="white" />
+        <stop offset="0.455757" stop-color="white" />
+        <stop offset="0.455984" stop-color="#A4509E" />
+        <stop offset="0.718572" stop-color="#A4509E" />
+        <stop offset="0.718782" stop-color="white" />
+        <stop offset="0.792686" stop-color="white" />
+        <stop offset="0.799699" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <clipPath id="paint14_diamond_1_69_clip_path">
+        <path d="M718 552H651.5V638L683.5 692L741.5 657.5L718 620.5V552Z" />
+      </clipPath>
+      <linearGradient id="paint14_diamond_1_69" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+        <stop offset="0.64" stop-color="#B97F32" />
+        <stop offset="0.65" stop-color="white" />
+        <stop offset="0.7" stop-color="white" />
+        <stop offset="0.7" stop-color="#A4509E" />
+        <stop offset="0.85" stop-color="#A4509E" />
+        <stop offset="0.85" stop-color="white" />
+        <stop offset="0.898938" stop-color="white" />
+        <stop offset="0.899038" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <clipPath id="paint15_diamond_1_69_clip_path">
+        <path d="M748.5 672L692.5 707L722.5 761L776 790.5L810.5 734L771.5 709.5L748.5 672Z" />
+      </clipPath>
+      <linearGradient id="paint15_diamond_1_69" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+        <stop offset="0.620568" stop-color="#B97F32" />
+        <stop offset="0.626145" stop-color="white" />
+        <stop offset="0.665362" stop-color="white" />
+        <stop offset="0.670238" stop-color="#A4509E" />
+        <stop offset="0.771072" stop-color="#A4509E" />
+        <stop offset="0.775546" stop-color="white" />
+        <stop offset="0.813582" stop-color="white" />
+        <stop offset="0.81808" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <clipPath id="paint16_diamond_1_69_clip_path">
+        <path d="M859 763.5L822.5 741L789 799L844 831H890.5V763.5H859Z" />
+      </clipPath>
+      <linearGradient id="paint16_diamond_1_69" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+        <stop offset="0.559438" stop-color="#B97F32" />
+        <stop offset="0.561321" stop-color="white" />
+        <stop offset="0.620349" stop-color="white" />
+        <stop offset="0.627792" stop-color="#A4509E" />
+        <stop offset="0.732849" stop-color="#A4509E" />
+        <stop offset="0.735135" stop-color="white" />
+        <stop offset="0.796497" stop-color="white" />
+        <stop offset="0.801534" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <clipPath id="paint18_diamond_1_69_clip_path">
+        <path d="M1056.5 763H1024.5V831H1073L1127.5 798L1093 741.5L1056.5 763Z" />
+      </clipPath>
+      <linearGradient id="paint18_diamond_1_69" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+        <stop offset="0.519061" stop-color="#B97F32" />
+        <stop offset="0.519913" stop-color="white" />
+        <stop offset="0.600454" stop-color="white" />
+        <stop offset="0.601074" stop-color="#A4509E" />
+        <stop offset="0.730422" stop-color="#A4509E" />
+        <stop offset="0.731796" stop-color="white" />
+        <stop offset="0.797733" stop-color="white" />
+        <stop offset="0.803761" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <clipPath id="paint19_diamond_1_69_clip_path">
+        <path d="M1143.5 711L1105.5 734L1141.5 791.5L1194.5 760.5L1222.5 706L1166.5 671L1143.5 711Z" />
+      </clipPath>
+      <linearGradient id="paint19_diamond_1_69" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+        <stop offset="0.605669" stop-color="#B97F32" />
+        <stop offset="0.605769" stop-color="white" />
+        <stop offset="0.677785" stop-color="white" />
+        <stop offset="0.677885" stop-color="#A4509E" />
+        <stop offset="0.822015" stop-color="#A4509E" />
+        <stop offset="0.822115" stop-color="white" />
+        <stop offset="0.903846" stop-color="white" />
+        <stop offset="0.903946" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <clipPath id="paint20_diamond_1_69_clip_path">
+        <path d="M1263.5 551.5H1197V621L1175 658L1234 691.5L1263.5 637.5V551.5Z" />
+      </clipPath>
+      <linearGradient id="paint20_diamond_1_69" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+        <stop offset="0.504091" stop-color="#B97F32" />
+        <stop offset="0.507561" stop-color="white" />
+        <stop offset="0.556564" stop-color="white" />
+        <stop offset="0.558976" stop-color="#A4509E" />
+        <stop offset="0.64" stop-color="#A4509E" />
+        <stop offset="0.640318" stop-color="white" />
+        <stop offset="0.696562" stop-color="white" />
+        <stop offset="0.700208" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <linearGradient id="paint17_linear" x1="958" y1="764" x2="958" y2="831" gradientUnits="userSpaceOnUse">
+        <stop offset="0.246233" stop-color="#B97F32" />
+        <stop offset="0.258452" stop-color="white" />
+        <stop offset="0.388566" stop-color="white" />
+        <stop offset="0.392055" stop-color="#A4509E" />
+        <stop offset="0.604045" stop-color="#A4509E" />
+        <stop offset="0.610088" stop-color="white" />
+        <stop offset="0.744165" stop-color="white" />
+        <stop offset="0.744395" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <linearGradient id="paint21_linear" x1="1198.5" y1="483.25" x2="1271.5" y2="483" gradientUnits="userSpaceOnUse">
+        <stop offset="0.195373" stop-color="#B97F32" />
+        <stop offset="0.200273" stop-color="white" />
+        <stop offset="0.304193" stop-color="white" />
+        <stop offset="0.314183" stop-color="#A4509E" />
+        <stop offset="0.532616" stop-color="#A4509E" />
+        <stop offset="0.535054" stop-color="white" />
+        <stop offset="0.712463" stop-color="white" />
+        <stop offset="0.720934" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <linearGradient id="paint22_linear" x1="1198" y1="358" x2="1269.5" y2="358" gradientUnits="userSpaceOnUse">
+        <stop offset="0.208643" stop-color="#B97F32" />
+        <stop offset="0.208643" stop-color="white" />
+        <stop offset="0.293921" stop-color="white" />
+        <stop offset="0.297557" stop-color="#A4509E" />
+        <stop offset="0.497501" stop-color="#A4509E" />
+        <stop offset="0.499212" stop-color="white" />
+        <stop offset="0.702016" stop-color="white" />
+        <stop offset="0.702905" stop-color="#A7D594" />
+        <stop offset="1" stop-color="#A7D594" />
+      </linearGradient>
+      <linearGradient id="paint23_linear" x1="959.25" y1="520.5" x2="959.25" y2="650" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#19BBEC" />
+        <stop offset="0.6" stop-color="#19BBEC" />
+        <stop offset="0.6" stop-color="#0F6E38" />
+      </linearGradient>
+    </defs>
+  </svg>
+</div>

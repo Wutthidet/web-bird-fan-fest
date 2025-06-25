@@ -1,5 +1,11 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+interface Particle {
+  x: number;
+  y: number;
+  delay: number;
+}
 
 @Component({
   selector: 'app-intro',
@@ -8,18 +14,51 @@ import { CommonModule } from '@angular/common';
   templateUrl: './intro.component.html',
   styleUrl: './intro.component.scss'
 })
-export class IntroComponent {
+export class IntroComponent implements OnInit, OnDestroy {
   @Output() enterWebsite = new EventEmitter<void>();
 
   isAnimating = false;
+  isSlideOut = false;
+  particles: Particle[] = [];
+
+  private animationTimer?: ReturnType<typeof setTimeout>;
+
+  ngOnInit() {
+    this.generateParticles();
+  }
+
+  ngOnDestroy() {
+    if (this.animationTimer) {
+      clearTimeout(this.animationTimer);
+    }
+  }
+
+  private generateParticles() {
+    this.particles = [];
+    for (let i = 0; i < 15; i++) {
+      this.particles.push({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        delay: Math.random() * 4
+      });
+    }
+  }
 
   onEnterWebsite() {
     if (this.isAnimating) return;
 
     this.isAnimating = true;
 
-    setTimeout(() => {
-      this.enterWebsite.emit();
-    }, 1200);
+    this.animationTimer = setTimeout(() => {
+      this.isSlideOut = true;
+
+      setTimeout(() => {
+        this.enterWebsite.emit();
+      }, 1000);
+    }, 2500);
+  }
+
+  trackParticle(index: number, particle: Particle): number {
+    return index;
   }
 }
