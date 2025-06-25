@@ -12,7 +12,7 @@ export interface TransactionSeat {
 }
 
 export interface UserTransaction {
-  transactionId: number;
+  transactionId: string;
   totalAmount: number;
   seats: TransactionSeat[];
 }
@@ -25,14 +25,14 @@ export interface BookingTransactionSeat {
 }
 
 export interface BookingTransaction {
-  transactionId: number;
+  transactionId: string;
   totalAmount: number;
   Status: 1 | 2 | 3;
   seats_data: BookingTransactionSeat[];
 }
 
 export interface PayTransactionRequest {
-  transactionId: number;
+  transactionId: string;
   billUrl: string;
 }
 
@@ -42,7 +42,7 @@ export interface PayTransactionResponse {
 }
 
 export interface CancelTransactionRequest {
-  transactionId: number;
+  transactionId: string;
 }
 
 export interface CancelTransactionResponse {
@@ -96,7 +96,7 @@ interface CachedTransactions {
 }
 
 interface UploadProgress {
-  transactionId: number;
+  transactionId: string;
   progress: number;
   status: 'uploading' | 'success' | 'error';
 }
@@ -112,7 +112,7 @@ export class TransactionService implements OnDestroy {
 
   private readonly transactionCache = new Map<string, CachedTransactions>();
   private readonly pendingRequests = new Map<string, Observable<any>>();
-  private readonly uploadProgress$ = new BehaviorSubject<Map<number, UploadProgress>>(new Map());
+  private readonly uploadProgress$ = new BehaviorSubject<Map<string, UploadProgress>>(new Map());
 
   private readonly CACHE_DURATION = environment.cacheDuration.transaction;
   private readonly MAX_CACHE_SIZE = 10;
@@ -275,7 +275,7 @@ export class TransactionService implements OnDestroy {
     const formData = new FormData();
     formData.append('image', imageFile);
 
-    const transactionId = Date.now();
+    const transactionId = Date.now().toString();
     this.updateUploadProgress(transactionId, 0, 'uploading');
 
     return this.http.post<ImageUploadResponse>(
@@ -339,7 +339,7 @@ export class TransactionService implements OnDestroy {
   }
 
   cancelTransaction(request: CancelTransactionRequest): Observable<CancelTransactionResponse> {
-    if (!request.transactionId || !Number.isInteger(request.transactionId) || request.transactionId <= 0) {
+    if (!request.transactionId || typeof request.transactionId !== 'string' || request.transactionId.trim().length === 0) {
       return throwError(() => new Error('Valid transaction ID is required'));
     }
 
@@ -430,8 +430,8 @@ export class TransactionService implements OnDestroy {
   private validatePaymentRequest(request: PayTransactionRequest): boolean {
     return !!(
       request?.transactionId &&
-      Number.isInteger(request.transactionId) &&
-      request.transactionId > 0 &&
+      typeof request.transactionId === 'string' &&
+      request.transactionId.trim().length > 0 &&
       request?.billUrl &&
       typeof request.billUrl === 'string' &&
       request.billUrl.trim().length > 0 &&
@@ -448,14 +448,14 @@ export class TransactionService implements OnDestroy {
     }
   }
 
-  private updateUploadProgress(transactionId: number, progress: number, status: 'uploading' | 'success' | 'error'): void {
+  private updateUploadProgress(transactionId: string, progress: number, status: 'uploading' | 'success' | 'error'): void {
     const currentProgress = this.uploadProgress$.value;
     const newProgress = new Map(currentProgress);
     newProgress.set(transactionId, { transactionId, progress, status });
     this.uploadProgress$.next(newProgress);
   }
 
-  private removeUploadProgress(transactionId: number): void {
+  private removeUploadProgress(transactionId: string): void {
     const currentProgress = this.uploadProgress$.value;
     const newProgress = new Map(currentProgress);
     newProgress.delete(transactionId);

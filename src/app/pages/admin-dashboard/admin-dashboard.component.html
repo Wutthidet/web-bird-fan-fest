@@ -1342,7 +1342,10 @@
                         <div class="user-name">
                           {{ log.firstName }} {{ log.lastName }}
                           <span *ngIf="log.isAdmin"
-                            class="admin-badge">Admin</span>
+                                class="admin-badge"
+                                [ngClass]="getAdminBadgeClass(log)">
+                            {{ getAdminBadgeText(log) }}
+                          </span>
                         </div>
                         <div class="user-id">User ID: {{ log.userId }}</div>
                       </div>
@@ -1646,7 +1649,10 @@
             <span>
               {{ selectedSeatLog.firstName }} {{ selectedSeatLog.lastName }}
               <span *ngIf="selectedSeatLog.isAdmin"
-                class="admin-badge">Admin</span>
+                    class="admin-badge"
+                    [ngClass]="getAdminBadgeClass(selectedSeatLog)">
+                {{ getAdminBadgeText(selectedSeatLog) }}
+              </span>
             </span>
           </div>
           <div class="info-item">

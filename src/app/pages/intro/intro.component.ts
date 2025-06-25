@@ -20,8 +20,10 @@ export class IntroComponent implements OnInit, OnDestroy {
   isAnimating = false;
   isSlideOut = false;
   particles: Particle[] = [];
+  tiltStyle = 'rotateX(0deg) rotateY(0deg)';
 
   private animationTimer?: ReturnType<typeof setTimeout>;
+  private readonly MAX_TILT = 5;
 
   ngOnInit() {
     this.generateParticles();
@@ -42,6 +44,21 @@ export class IntroComponent implements OnInit, OnDestroy {
         delay: Math.random() * 4
       });
     }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    const target = event.currentTarget as HTMLElement;
+    const { offsetWidth, offsetHeight } = target;
+    const { offsetX, offsetY } = event;
+
+    const rotateY = ((offsetX - offsetWidth / 2) / (offsetWidth / 2)) * this.MAX_TILT;
+    const rotateX = -((offsetY - offsetHeight / 2) / (offsetHeight / 2)) * this.MAX_TILT;
+
+    this.tiltStyle = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  }
+
+  onMouseLeave() {
+    this.tiltStyle = `rotateX(0deg) rotateY(0deg)`;
   }
 
   onEnterWebsite() {

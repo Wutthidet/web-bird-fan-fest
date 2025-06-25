@@ -17,7 +17,7 @@ export interface EmptySeatsResponse {
 }
 
 export interface AdminTransaction {
-  transactionId: number;
+  transactionId: string;
   userId: number;
   FirstName: string;
   LastName: string;
@@ -42,7 +42,7 @@ export interface AllTransactionsResponse {
 }
 
 export interface ApproveTransactionRequest {
-  transactionId: number;
+  transactionId: string;
 }
 
 export interface ApproveTransactionResponse {
@@ -51,7 +51,7 @@ export interface ApproveTransactionResponse {
 }
 
 export interface CancelTransactionRequest {
-  transactionId: number;
+  transactionId: string;
 }
 
 export interface CancelTransactionResponse {

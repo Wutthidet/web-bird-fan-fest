@@ -1,18 +1,31 @@
+@keyframes rotateBackground {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .intro-container {
   position: relative;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  cursor: pointer;
   transition: all 0.4s ease;
-  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgb(240 248 253) 100%);
+  background-color: rgb(240 248 253);
 
-  &:hover {
-    .poster-text {
-      transform: translateY(-10px);
-      opacity: 1;
-    }
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    z-index: 0;
+    background-image: repeating-conic-gradient(from 0deg at 50% 50%, rgba(218, 56, 48, 0.05) 0deg 1.5deg, transparent 1.5deg 10deg);
+    animation: rotateBackground 150s linear infinite;
   }
 
   &.slide-out {
@@ -53,31 +66,10 @@
   justify-content: center;
 }
 
-.animated-bird {
+.animated-gif {
   width: 120px;
   height: 120px;
-  animation: birdFloat 3s ease-in-out infinite;
-
-  .bird-body {
-    animation: bodyPulse 2s ease-in-out infinite;
-  }
-
-  .wings {
-    transform-origin: 45px 35px;
-    animation: wingFlap 0.6s ease-in-out infinite;
-  }
-
-  .wing {
-    transform-origin: center;
-  }
-
-  .wing-1 {
-    animation: wing1Flap 0.6s ease-in-out infinite;
-  }
-
-  .wing-2 {
-    animation: wing2Flap 0.6s ease-in-out infinite 0.1s;
-  }
+  animation: gifFloat 3s ease-in-out infinite;
 }
 
 .loading-text {
@@ -134,23 +126,25 @@
 }
 
 .slideshow-container {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
-  height: 100%;
+  max-width: 1300px;
+  border: 8px solid white;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  background-color: white;
   z-index: 1;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.5, 1);
 }
 
 .slide {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  aspect-ratio: 16 / 9;
+  border-radius: 4px;
 
   &.slide-1 {
     background-image: url('/assets/images/concert-1.jpg');
@@ -166,17 +160,20 @@
   background: transparent;
   z-index: 2;
   transition: all 0.4s ease;
+  pointer-events: none;
 }
 
 .content {
   position: relative;
   z-index: 3;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 2rem 2rem 1rem 2rem;
+  padding: 2rem;
+  perspective: 1500px;
 }
 
 .poster-text {
@@ -184,59 +181,43 @@
   color: #da3830;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   opacity: 0.9;
+  margin-top: 2.5rem;
 
-  p {
+  .booking-button {
+    background: rgba(139, 0, 0, 0.1);
+    border: 2px solid #da3830;
+    color: #da3830;
     font-size: clamp(1rem, 3vw, 1.5rem);
-    font-weight: 400;
-    margin: 0;
-    opacity: 0.8;
+    font-weight: 500;
+    padding: 0.75rem 2.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     letter-spacing: 1px;
-    text-shadow: 0 2px 10px rgba(125, 19, 9, 0.2);
+    text-shadow: 0 2px 10px rgba(139, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+    font-family: inherit;
+
+    &:hover {
+      background: rgba(139, 0, 0, 0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(139, 0, 0, 0.3);
+      border-color: #660000;
+    }
+
+    &:active {
+      transform: translateY(-2px);
+    }
   }
 }
 
-@keyframes birdFloat {
+@keyframes gifFloat {
   0%, 100% {
     transform: translateY(0px) rotate(-2deg);
   }
   50% {
     transform: translateY(-15px) rotate(2deg);
-  }
-}
-
-@keyframes bodyPulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes wingFlap {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(-15deg);
-  }
-}
-
-@keyframes wing1Flap {
-  0%, 100% {
-    transform: rotate(0deg) scaleY(1);
-  }
-  50% {
-    transform: rotate(-20deg) scaleY(0.8);
-  }
-}
-
-@keyframes wing2Flap {
-  0%, 100% {
-    transform: rotate(0deg) scaleY(1);
-  }
-  50% {
-    transform: rotate(-15deg) scaleY(0.9);
   }
 }
 
@@ -290,16 +271,18 @@
 
 @media (max-width: 768px) {
   .content {
-    padding: 1.5rem 1.5rem 3rem 1.5rem;
+    padding: 1.5rem;
   }
 
   .poster-text {
-    p {
+    margin-top: 2rem;
+    .booking-button {
       font-size: clamp(0.9rem, 4vw, 1.2rem);
+      padding: 0.8rem 1.5rem;
     }
   }
 
-  .animated-bird {
+  .animated-gif {
     width: 100px;
     height: 100px;
   }
@@ -317,16 +300,22 @@
 
 @media (max-width: 480px) {
   .content {
-    padding: 1rem 1rem 2.5rem 1rem;
+    padding: 1rem;
+  }
+
+  .slideshow-container {
+    width: 100%;
   }
 
   .poster-text {
-    p {
+    margin-top: 1.5rem;
+    .booking-button {
       font-size: clamp(0.8rem, 5vw, 1.1rem);
+      padding: 0.7rem 1.2rem;
     }
   }
 
-  .animated-bird {
+  .animated-gif {
     width: 80px;
     height: 80px;
   }

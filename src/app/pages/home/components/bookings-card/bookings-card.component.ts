@@ -23,7 +23,7 @@ export class BookingsCardComponent {
 
   getStatusText(status: 1 | 2 | 3 | undefined): string {
     switch (status) {
-      case 1: return 'จองแต่ยังไม่จ่ายเงิน';
+      case 1: return 'ยังไม่ชำระเงิน';
       case 2: return 'รอตรวจสอบ';
       case 3: return 'ชำระเงินสำเร็จ';
       default: return 'ไม่ทราบสถานะ';
@@ -47,7 +47,7 @@ export class BookingsCardComponent {
     this.bookingClick.emit(booking);
   }
 
-  trackByBooking(index: number, booking: BookingTransaction): number {
+  trackByBooking(index: number, booking: BookingTransaction): string {
     return booking.transactionId;
   }
 }

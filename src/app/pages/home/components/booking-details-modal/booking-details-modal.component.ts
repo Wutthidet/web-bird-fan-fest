@@ -19,7 +19,7 @@ interface FailedSeatInfo {
 
 interface BookingResult {
   success: boolean;
-  transactionId?: number;
+  transactionId?: string;
   message: string;
   bookedSeats?: BookedSeatInfo[];
   failedSeats?: FailedSeatInfo[];
@@ -42,18 +42,18 @@ export class BookingDetailsModalComponent {
   @Input() show = false;
   @Input() mode: ModalMode | null = null;
   @Input() data: ModalData | null = null;
-  @Input() uploadedImages = new Map<number, string>();
-  @Input() isUploading: number | null = null;
-  @Input() isProcessing: number | null = null;
-  @Input() dragover: number | null = null;
+  @Input() uploadedImages = new Map<string, string>();
+  @Input() isUploading: string | null = null;
+  @Input() isProcessing: string | null = null;
+  @Input() dragover: string | null = null;
   @Input() showCancelConfirmation = false;
-  @Input() pendingCancelTransactionId: number | null = null;
+  @Input() pendingCancelTransactionId: string | null = null;
 
   @Output() close = new EventEmitter<void>();
-  @Output() fileUpload = new EventEmitter<{ file: File; transactionId: number }>();
-  @Output() removeImage = new EventEmitter<{ event: Event; transactionId: number }>();
-  @Output() payTransaction = new EventEmitter<number>();
-  @Output() cancelTransaction = new EventEmitter<number>();
+  @Output() fileUpload = new EventEmitter<{ file: File; transactionId: string }>();
+  @Output() removeImage = new EventEmitter<{ event: Event; transactionId: string }>();
+  @Output() payTransaction = new EventEmitter<string>();
+  @Output() cancelTransaction = new EventEmitter<string>();
   @Output() cancelConfirmed = new EventEmitter<void>();
   @Output() cancelCancelled = new EventEmitter<void>();
 
@@ -61,7 +61,7 @@ export class BookingDetailsModalComponent {
     this.close.emit();
   }
 
-  onDragOver(event: DragEvent, transactionId: number): void {
+  onDragOver(event: DragEvent, transactionId: string): void {
     event.preventDefault();
   }
 
@@ -69,7 +69,7 @@ export class BookingDetailsModalComponent {
     event.preventDefault();
   }
 
-  onDrop(event: DragEvent, transactionId: number): void {
+  onDrop(event: DragEvent, transactionId: string): void {
     event.preventDefault();
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
@@ -77,14 +77,14 @@ export class BookingDetailsModalComponent {
     }
   }
 
-  selectFile(transactionId: number): void {
+  selectFile(transactionId: string): void {
     const fileInput = document.getElementById(`file-input-${transactionId}`) as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
     }
   }
 
-  onFileSelected(event: Event, transactionId: number): void {
+  onFileSelected(event: Event, transactionId: string): void {
     const target = event.target as HTMLInputElement;
     const files = target.files;
     if (files && files.length > 0) {
@@ -92,15 +92,15 @@ export class BookingDetailsModalComponent {
     }
   }
 
-  onRemoveUploadedImage(event: Event, transactionId: number): void {
+  onRemoveUploadedImage(event: Event, transactionId: string): void {
     this.removeImage.emit({ event, transactionId });
   }
 
-  onPayTransaction(transactionId: number): void {
+  onPayTransaction(transactionId: string): void {
     this.payTransaction.emit(transactionId);
   }
 
-  onCancelTransaction(transactionId: number): void {
+  onCancelTransaction(transactionId: string): void {
     this.cancelTransaction.emit(transactionId);
   }
 
@@ -118,7 +118,7 @@ export class BookingDetailsModalComponent {
 
   getStatusText(status: 1 | 2 | 3 | undefined): string {
     switch (status) {
-      case 1: return 'จองแต่ยังไม่จ่ายเงิน';
+      case 1: return 'ยังไม่ชำระเงิน';
       case 2: return 'รอตรวจสอบ';
       case 3: return 'ชำระเงินสำเร็จ';
       default: return 'ไม่ทราบสถานะ';
@@ -138,7 +138,7 @@ export class BookingDetailsModalComponent {
     return seat.display ?? seat.column;
   }
 
-  getUploadedImage(transactionId: number): string | undefined {
+  getUploadedImage(transactionId: string): string | undefined {
     return this.uploadedImages.get(transactionId);
   }
 
@@ -153,7 +153,7 @@ export class BookingDetailsModalComponent {
     return false;
   };
 
-  getModalTransactionId = (): number | undefined => this.data?.transactionId;
+  getModalTransactionId = (): string | undefined => this.data?.transactionId;
   getModalStatus = (): 1 | 2 | 3 | undefined => (this.data as BookingTransaction)?.Status;
   getModalZone = (): string | undefined => (this.data as BookingResult)?.zone;
   getModalTotalAmount = (): number | undefined => (this.data as BookingResult)?.totalPrice ?? (this.data as BookingTransaction)?.totalAmount;

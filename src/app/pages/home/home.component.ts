@@ -35,7 +35,7 @@ interface FailedSeatInfo {
 
 interface BookingResult {
   success: boolean;
-  transactionId?: number;
+  transactionId?: string;
   message: string;
   bookedSeats?: BookedSeatInfo[];
   failedSeats?: FailedSeatInfo[];
@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private readonly refreshTrigger$ = new BehaviorSubject<boolean>(true);
   private readonly seatCache = new Map<string, ZoneCache>();
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-  readonly uploadedImages = new Map<number, string>();
+  readonly uploadedImages = new Map<string, string>();
 
   private readonly CACHE_DURATION_MS = 30 * 1000;
   private readonly REFRESH_INTERVAL_MS = 30 * 1000;
@@ -83,16 +83,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   modalData: ModalData | null = null;
   modalMode: ModalMode | null = null;
 
-  isUploading: number | null = null;
-  isProcessing: number | null = null;
-  dragover: number | null = null;
+  isUploading: string | null = null;
+  isProcessing: string | null = null;
+  dragover: string | null = null;
 
   allBookings: BookingTransaction[] = [];
   isLoadingBookings = false;
   bookingError = '';
 
   showCancelConfirmation = false;
-  pendingCancelTransactionId: number | null = null;
+  pendingCancelTransactionId: string | null = null;
 
   private readonly priceColorMap: { [key: number]: string } = {
     3000: '#e3362e', 3500: '#f4ef3e', 4500: '#4962a6',
@@ -341,7 +341,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             if (response.status === 'success' && response.transactionId) {
               resultData = {
                 success: true,
-                transactionId: response.transactionId,
+                transactionId: response.transactionId.toString(),
                 message: response.message,
                 bookedSeats: selectedSeatsData.map(seat => ({
                   row: seat.ROW,
@@ -434,7 +434,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleFileUpload(file: File, transactionId: number): void {
+  handleFileUpload(file: File, transactionId: string): void {
     if (!this.validateFile(file)) return;
 
     this.isUploading = transactionId;
@@ -464,13 +464,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  removeUploadedImage(event: Event, transactionId: number): void {
+  removeUploadedImage(event: Event, transactionId: string): void {
     event.stopPropagation();
     this.uploadedImages.delete(transactionId);
     this.cdr.detectChanges();
   }
 
-  payTransaction(transactionId: number): void {
+  payTransaction(transactionId: string): void {
     const billUrl = this.uploadedImages.get(transactionId);
     if (!billUrl) {
       this.toastService.error('ไม่พบสลิป', 'กรุณาอัปโหลดสลิปการโอนเงินก่อน');
@@ -514,7 +514,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  cancelTransaction(transactionId: number): void {
+  cancelTransaction(transactionId: string): void {
     this.pendingCancelTransactionId = transactionId;
     this.showCancelConfirmation = true;
     this.cdr.detectChanges();
