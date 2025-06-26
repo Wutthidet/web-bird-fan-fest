@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { IntroComponent } from './pages/intro/intro.component';
 import { LayoutComponent } from './shared/components/layout/layout.component';
-import { PdpaPopupComponent } from './shared/components/pdpa/pdpa.component';
+import { PdpaPopupComponent } from './pages/home/components/pdpa/pdpa.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { ToastService } from './services/toast.service';
 

@@ -139,6 +139,26 @@
                 </div>
               </div>
             </div>
+
+            <div *ngIf="shouldShowAttachedImages()" class="detail-section">
+              <h4>รูปภาพที่แนบ</h4>
+              <div class="attached-images-grid">
+                <div *ngFor="let image of getAttachedImages(); trackBy: trackByImage" class="image-item">
+                  <div class="image-label">{{ image.label }}</div>
+                  <div class="image-container">
+                    <img *ngIf="image.url" [src]="image.url" [alt]="image.label" class="attached-image" (click)="openImageViewer(image.url, image.label)">
+                    <div *ngIf="!image.url" class="no-image-placeholder">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <polyline points="21,15 16,10 5,21" stroke="currentColor" stroke-width="2" fill="none"/>
+                      </svg>
+                      <span>ไม่มีรูป</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </ng-container>
       </div>
@@ -238,4 +258,21 @@
     (cancelled)="onCancelCancelled()"
     (closed)="onCancelCancelled()">
   </app-confirmation>
+</div>
+
+<div *ngIf="showImageViewer" class="image-viewer-overlay" (click)="closeImageViewer()">
+  <div class="image-viewer-container" (click)="$event.stopPropagation()">
+    <div class="image-viewer-header">
+      <h4>{{ viewerImageLabel }}</h4>
+      <button class="close-viewer-btn" (click)="closeImageViewer()" aria-label="Close Image Viewer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" />
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+    <div class="image-viewer-content">
+      <img [src]="viewerImageUrl" [alt]="viewerImageLabel" class="viewer-image">
+    </div>
+  </div>
 </div>

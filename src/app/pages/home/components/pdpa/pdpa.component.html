@@ -1,0 +1,192 @@
+<div class="pdpa-overlay" [class.show]="!isAnimating">
+  <div class="pdpa-container" [class.animate-out]="isAnimating">
+    <div class="pdpa-content">
+
+      <div class="pdpa-header">
+        <div class="icon-container">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h2>ข้อกำหนดและเงื่อนไข</h2>
+        <p class="subtitle">BIRD FANFEST 20XX</p>
+      </div>
+      <div class="pdpa-body">
+        <div class="content-cards">
+          <div class="content-card" [class.expanded]="expandedCards.terms">
+            <div class="card-header" (click)="toggleCard('terms')">
+              <div class="card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"
+                    stroke="currentColor" stroke-width="2" />
+                  <path d="M9 12l2 2 4-4" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <h3>เงื่อนไขการจำหน่ายบัตร</h3>
+              <div class="expand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" [class.expanded]="expandedCards.terms">
+              <ul>
+                <li>เริ่มจำหน่ายบัตร ตั้งแต่วันอังคารที่ 1 กรกฎาคม 2568
+                  ตั้งแต่เวลา 09:00 น. เป็นต้นไป รอบการกุศล</li>
+                <li>บัตรทุกใบเป็นบัตรนั่ง</li>
+                <li>ทางผู้จัดงานไม่อนุญาตให้นำบัตรไปใช้ประโยชน์ทางการค้า,การทำโปรโมชั่นกับสินค้า
+                  เช่น การลด, แลก, แจก, แถม
+                  เว้นแต่จะได้รับความยินยอมจากทางผู้จัดงาน</li>
+                <li>การนำบัตรไปขายต่อหรือแจกเพื่อการโฆษณาหรือประชาสัมพันธ์โดยไม่ได้รับอนุญาตจากบริษัทฯ
+                  ถือว่ามีความผิดทางกฎหมาย</li>
+                <li>การซื้อบัตรจากช่องทางอื่น ที่ไม่ใช่
+                  https://www.sigjhospital.com/testcongj20xx/home ทางผู้จัดงาน
+                  จะไม่รับผิดชอบในกรณีใด ๆ ทั้งสิ้น</li>
+                <li>โปรดระวังมิจฉาชีพที่แฝงมาในรูปแบบต่าง ๆ เช่น การรับจองบัตร
+                  การให้โค้ดจอง การซื้อ-ขายบัตรนอกระบบ การแอบอ้างเป็นทางทีมงาน
+                  เป็นต้น</li>
+                <li>ไม่จำกัดอายุผู้ชม / เด็กส่วนสูงเกิน 100 ซม.
+                  ต้องใช้บัตรเข้าชมการแสดง</li>
+                <li>ทางผู้จัดงานขอสงวนสิทธิ์ในการเปลี่ยนแปลงเงื่อนไข
+                  โดยไม่จำเป็นต้องแจ้งให้ทราบล่วงหน้า</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="content-card" [class.expanded]="expandedCards.measures">
+            <div class="card-header" (click)="toggleCard('measures')">
+              <div class="card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                  <circle cx="12" cy="12" r="9" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <h3>มาตรการเข้างาน</h3>
+              <div class="expand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" [class.expanded]="expandedCards.measures">
+              <ul>
+                <li>ก่อนเข้าชมคอนเสิร์ตผู้ชมทุกคนจะต้องมีบัตรเข้างาน
+                  และต้องลงทะเบียนเข้างานที่ระบบ Register ที่
+                  https://www.sigjhospital.com/testcongj20xx/home หรือ
+                  สแกนคิวอาร์โค้ด หลังบัตรคอนเสิร์ต</li>
+                <li>ขอความร่วมมือผู้ชมสวมใส่หน้ากากอนามัยขณะอยู่ภายในงานและเข้าชมคอนเสิร์ต</li>
+                <li>ผู้เข้างานจะต้องปฎิบัติตามมาตรการเข้างานตามที่ผู้จัดงานกำหนดไว้อย่างเคร่งครัด</li>
+                <li>มาตรการอาจมีการเปลี่ยนแปลงตามสถานการณ์จากประกาศกรมควบคุมโรค</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="content-card" [class.expanded]="expandedCards.privacy">
+            <div class="card-header" (click)="toggleCard('privacy')">
+              <div class="card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"
+                    stroke="currentColor" stroke-width="2" />
+                  <circle cx="8.5" cy="7" r="4" stroke="currentColor"
+                    stroke-width="2" />
+                  <path d="M20 8v6M23 11h-6" stroke="currentColor"
+                    stroke-width="2" />
+                </svg>
+              </div>
+              <h3>ความสำคัญกับความเป็นส่วนตัว</h3>
+              <div class="expand-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+            </div>
+            <div class="card-content" [class.expanded]="expandedCards.privacy">
+              <p>เพื่อให้บริการจองที่นั่งคอนเสิร์ตที่ดีที่สุด
+                อาจจำเป็นต้องเก็บรวบรวม ใช้ และเปิดเผยข้อมูลส่วนบุคคลของคุณ
+                ตามวัตถุประสงค์ที่ระบุไว้ในนโยบายความเป็นส่วนตัว</p>
+
+              <div class="privacy-section">
+                <h4>ข้อมูลที่เราอาจเก็บรวบรวม ได้แก่:</h4>
+                <ul class="compact-list">
+                  <li>ข้อมูลการติดต่อ (ชื่อ อีเมล หมายเลขโทรศัพท์
+                    รหัสบัตรประชาชน)</li>
+                  <li>ข้อมูลการจองและการชำระเงิน</li>
+                  <li>ข้อมูลการใช้งานเว็บไซต์ (cookies)</li>
+                  <li>ข้อมูลที่จำเป็นสำหรับการยืนยันตัวตน</li>
+                </ul>
+              </div>
+
+              <div class="privacy-section">
+                <h4>สิทธิของคุณภายใต้ PDPA:</h4>
+                <ul class="compact-list">
+                  <li>สิทธิในการเข้าถึงข้อมูลส่วนบุคคล</li>
+                  <li>สิทธิในการแก้ไขข้อมูลส่วนบุคคล</li>
+                  <li>สิทธิในการลบข้อมูลส่วนบุคคล</li>
+                  <li>สิทธิในการถอนความยินยอม</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="consent-notice">
+          <div class="notice-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="currentColor"
+                stroke-width="2" />
+              <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+            </svg>
+          </div>
+          <p><strong>การคลิก "ยอมรับ" ถือว่าคุณได้อ่านและยอมรับ
+              "เงื่อนไขการจำหน่ายบัตร", "มาตรการเข้างาน"
+              และให้ความยินยอมในการเก็บรวบรวมข้อมูลส่วนบุคคลตาม
+              "นโยบายความเป็นส่วนตัว" ของเรา</strong></p>
+        </div>
+      </div>
+
+      <div class="pdpa-footer">
+        <div class="button-group">
+          <button class="decline-btn" [class.clicked]="isAnimating"
+            (click)="onDecline()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span>ไม่ยอมรับ</span>
+          </button>
+          <button class="accept-btn" [class.clicked]="isAnimating"
+            (click)="onAccept()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span>ยอมรับและดำเนินการต่อ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

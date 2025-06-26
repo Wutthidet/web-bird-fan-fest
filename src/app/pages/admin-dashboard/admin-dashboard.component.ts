@@ -6,10 +6,10 @@ import { takeUntil, finalize, retry } from 'rxjs/operators';
 import { AdminService, ZoneStat, AdminTransaction, SeatLog } from '../../services/admin.service';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation/confirmation.component';
-import { SkeletonCardComponent } from '../../shared/components/skeleton-card/skeleton-card.component';
-import { SkeletonTableComponent } from '../../shared/components/skeleton-table/skeleton-table.component';
-import { AutoRefreshControlComponent } from '../../shared/components/auto-refresh/auto-refresh.component';
-import { ErrorBoundaryComponent } from '../../shared/components/error-boundary/error-boundary.component';
+import { SkeletonCardComponent } from './components/skeleton-card/skeleton-card.component';
+import { SkeletonTableComponent } from './components/skeleton-table/skeleton-table.component';
+import { AutoRefreshControlComponent } from './components/auto-refresh/auto-refresh.component';
+import { ErrorBoundaryComponent } from './components/error-boundary/error-boundary.component';
 
 interface StatusFilter {
   status: 0 | 1 | 2 | 3;
@@ -1238,13 +1238,21 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   formatDate(dateString: string): string {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('th-TH', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      const year = date.getUTCFullYear();
+      const month = date.getUTCMonth() + 1;
+      const day = date.getUTCDate();
+      const hours = date.getUTCHours();
+      const minutes = date.getUTCMinutes();
+      const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+        'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+        'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+      const thaiMonth = thaiMonths[month - 1];
+      const formattedHours = hours.toString().padStart(2, '0');
+      const formattedMinutes = minutes.toString().padStart(2, '0');
+
+      return `${day} ${thaiMonth} ${year} ${formattedHours}:${formattedMinutes}`;
     } catch (error) {
       return dateString;
     }

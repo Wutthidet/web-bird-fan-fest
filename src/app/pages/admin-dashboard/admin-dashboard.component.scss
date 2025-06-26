@@ -1693,6 +1693,16 @@
                       padding: 0.2rem 0.5rem;
                       border-radius: 8px;
                       text-transform: uppercase;
+
+                      &.admin-apf {
+                        background: #38a169;
+                        color: white;
+                      }
+
+                      &.admin-srj {
+                        background: #3182ce;
+                        color: white;
+                      }
                     }
                   }
 
@@ -2275,26 +2285,6 @@
         }
       }
     }
-  }
-}
-
-.admin-badge {
-  background: #38a169;
-  color: white;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px;
-  text-transform: uppercase;
-
-  &.admin-apf {
-    background: #38a169;
-    color: white;
-  }
-
-  &.admin-srj {
-    background: #3182ce;
-    color: white;
   }
 }
 

@@ -57,6 +57,10 @@ export class BookingDetailsModalComponent {
   @Output() cancelConfirmed = new EventEmitter<void>();
   @Output() cancelCancelled = new EventEmitter<void>();
 
+  showImageViewer = false;
+  viewerImageUrl = '';
+  viewerImageLabel = '';
+
   onCloseModal(): void {
     this.close.emit();
   }
@@ -112,6 +116,18 @@ export class BookingDetailsModalComponent {
     this.cancelCancelled.emit();
   }
 
+  openImageViewer(imageUrl: string, imageLabel: string): void {
+    this.viewerImageUrl = imageUrl;
+    this.viewerImageLabel = imageLabel;
+    this.showImageViewer = true;
+  }
+
+  closeImageViewer(): void {
+    this.showImageViewer = false;
+    this.viewerImageUrl = '';
+    this.viewerImageLabel = '';
+  }
+
   formatPrice(price: number): string {
     return price.toLocaleString('th-TH') + ' บาท';
   }
@@ -153,6 +169,12 @@ export class BookingDetailsModalComponent {
     return false;
   };
 
+  shouldShowAttachedImages = (): boolean => {
+    if (!this.isDetailsMode() || !this.data) return false;
+    const status = (this.data as BookingTransaction).Status;
+    return status === 2 || status === 3;
+  };
+
   getModalTransactionId = (): string | undefined => this.data?.transactionId;
   getModalStatus = (): 1 | 2 | 3 | undefined => (this.data as BookingTransaction)?.Status;
   getModalZone = (): string | undefined => (this.data as BookingResult)?.zone;
@@ -161,6 +183,17 @@ export class BookingDetailsModalComponent {
   getModalBookedSeats = (): BookedSeatInfo[] | undefined => (this.data as BookingResult)?.bookedSeats;
   getModalFailedSeats = (): FailedSeatInfo[] | undefined => (this.data as BookingResult)?.failedSeats;
   getModalSeatsData = (): BookingTransactionSeat[] | undefined => (this.data as BookingTransaction)?.seats_data;
+  getModalBillURL = (): string | undefined => (this.data as BookingTransaction)?.BillURL;
+  getModalBackURL1 = (): string | undefined => (this.data as BookingTransaction)?.BackURL1;
+  getModalBackURL2 = (): string | undefined => (this.data as BookingTransaction)?.BackURL2;
+
+  getAttachedImages(): Array<{ url?: string; label: string }> {
+    return [
+      { url: this.getModalBillURL(), label: 'สลิปการโอนเงิน' },
+      { url: this.getModalBackURL1(), label: 'รูปภาพที่ 1' },
+      { url: this.getModalBackURL2(), label: 'รูปภาพที่ 2' }
+    ];
+  }
 
   trackByBookedSeat(index: number, seat: BookedSeatInfo): string {
     return `${seat.row}-${seat.display}`;
@@ -172,5 +205,9 @@ export class BookingDetailsModalComponent {
 
   trackByBookingSeat(index: number, seat: BookingTransactionSeat): string {
     return `${seat.zone}-${seat.row}-${seat.column}`;
+  }
+
+  trackByImage(index: number, image: { url?: string; label: string }): string {
+    return `${index}-${image.label}`;
   }
 }

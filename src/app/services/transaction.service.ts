@@ -28,6 +28,9 @@ export interface BookingTransaction {
   transactionId: string;
   totalAmount: number;
   Status: 1 | 2 | 3;
+  BillURL?: string;
+  BackURL1?: string;
+  BackURL2?: string;
   seats_data: BookingTransactionSeat[];
 }
 

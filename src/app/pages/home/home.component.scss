@@ -109,6 +109,7 @@
           padding: 2rem;
           border: 1px solid rgba(50, 130, 184, 0.15);
           backdrop-filter: blur(10px);
+          margin-bottom: 3rem;
 
           .date, .time {
             font-size: 1.6rem;
@@ -126,6 +127,67 @@
           .time {
             color: #3282B8;
             opacity: 0.9;
+          }
+        }
+
+        .countdown-container {
+          margin-top: 3rem;
+
+          .countdown-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #BBE1FA;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+          }
+
+          .countdown-timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background: rgba(50, 130, 184, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(50, 130, 184, 0.2);
+            backdrop-filter: blur(15px);
+
+            .countdown-item {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              min-width: 70px;
+
+              .countdown-number {
+                font-size: 2.8rem;
+                font-weight: 800;
+                background: linear-gradient(135deg, #3282B8 0%, #BBE1FA 100%);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                line-height: 1;
+                margin-bottom: 0.5rem;
+                animation: pulseGlow 2s ease-in-out infinite;
+              }
+
+              .countdown-label {
+                font-size: 0.9rem;
+                font-weight: 500;
+                color: #BBE1FA;
+                opacity: 0.7;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+              }
+            }
+
+            .countdown-separator {
+              font-size: 2.2rem;
+              font-weight: 700;
+              color: #3282B8;
+              opacity: 0.6;
+              margin: 0 0.5rem;
+              animation: blink 2s ease-in-out infinite;
+            }
           }
         }
       }
@@ -157,6 +219,26 @@
   }
   50% {
     filter: brightness(1.1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.2);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 0.6;
+  }
+  51%, 100% {
+    opacity: 0.2;
   }
 }
 
@@ -197,6 +279,34 @@
 
             .date {
               font-size: 1.6rem;
+            }
+          }
+
+          .countdown-container {
+            .countdown-title {
+              font-size: 1.2rem;
+            }
+
+            .countdown-timer {
+              padding: 2rem 1.5rem;
+              gap: 0.8rem;
+
+              .countdown-item {
+                min-width: 60px;
+
+                .countdown-number {
+                  font-size: 2.2rem;
+                }
+
+                .countdown-label {
+                  font-size: 0.8rem;
+                }
+              }
+
+              .countdown-separator {
+                font-size: 1.8rem;
+                margin: 0 0.3rem;
+              }
             }
           }
         }
@@ -244,6 +354,36 @@
 
             .date {
               font-size: 1.4rem;
+            }
+          }
+
+          .countdown-container {
+            .countdown-timer {
+              padding: 1.8rem 1rem;
+              gap: 0.5rem;
+              flex-wrap: wrap;
+
+              .countdown-item {
+                min-width: 45px;
+
+                .countdown-number {
+                  font-size: 1.8rem;
+                }
+
+                .countdown-label {
+                  font-size: 0.7rem;
+                }
+              }
+
+              .countdown-separator {
+                font-size: 1.5rem;
+                margin: 0 0.2rem;
+
+                &:nth-child(6) {
+                  flex-basis: 100%;
+                  margin: 0.5rem 0;
+                }
+              }
             }
           }
         }

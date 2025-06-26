@@ -13,6 +13,15 @@ export class PdpaPopupComponent {
   @Output() declinePdpa = new EventEmitter<void>();
 
   isAnimating = false;
+  expandedCards = {
+    terms: false,
+    measures: false,
+    privacy: false
+  };
+
+  toggleCard(cardType: 'terms' | 'measures' | 'privacy') {
+    this.expandedCards[cardType] = !this.expandedCards[cardType];
+  }
 
   onAccept() {
     if (this.isAnimating) return;
