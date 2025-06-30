@@ -43,11 +43,16 @@ interface BookingResult {
   zone?: string;
 }
 
-interface TimeRemaining {
-  days: string;
-  hours: string;
-  minutes: string;
-  seconds: string;
+interface PaymentData {
+  transactionId: string;
+  billUrl: string;
+  Tax_need: boolean;
+  InName: string;
+  Tax_Name: string;
+  Tax_Identification_No: string;
+  Tax_Address: string;
+  Tax_Email: string;
+  Notes: string;
 }
 
 type ModalData = BookingResult | BookingTransaction;
@@ -73,19 +78,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   private readonly refreshTrigger$ = new BehaviorSubject<boolean>(true);
   private readonly seatCache = new Map<string, ZoneCache>();
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-  private countdownTimer: ReturnType<typeof setInterval> | null = null;
   readonly uploadedImages = new Map<string, string>();
 
   private readonly CACHE_DURATION_MS = 30 * 1000;
   private readonly REFRESH_INTERVAL_MS = 30 * 1000;
-  private readonly targetDate = new Date('2025-07-01T09:00:00+07:00');
-
-  timeRemaining: TimeRemaining = {
-    days: '00',
-    hours: '00',
-    minutes: '00',
-    seconds: '00'
-  };
 
   selectedZoneSeats: Seat[] = [];
   selectedSeats: Set<string> = new Set();
@@ -127,7 +123,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initializeData();
     this.setupAutoRefresh();
-    this.startCountdown();
   }
 
   ngOnDestroy() {
@@ -160,41 +155,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     }, this.REFRESH_INTERVAL_MS);
   }
 
-  private startCountdown(): void {
-    this.updateCountdown();
-    this.countdownTimer = setInterval(() => {
-      this.updateCountdown();
-    }, 1000);
-  }
-
-  private updateCountdown(): void {
-    const now = new Date().getTime();
-    const distance = this.targetDate.getTime() - now;
-
-    if (distance > 0) {
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      this.timeRemaining = {
-        days: days.toString().padStart(2, '0'),
-        hours: hours.toString().padStart(2, '0'),
-        minutes: minutes.toString().padStart(2, '0'),
-        seconds: seconds.toString().padStart(2, '0')
-      };
-    } else {
-      this.timeRemaining = {
-        days: '00',
-        hours: '00',
-        minutes: '00',
-        seconds: '00'
-      };
-    }
-
-    this.cdr.detectChanges();
-  }
-
   private refreshCurrentZoneData() {
     if (!this.currentSelectedZone) return [];
     return this.seatService.getSeats(this.currentSelectedZone)
@@ -218,11 +178,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.refreshTimer) {
       clearInterval(this.refreshTimer);
       this.refreshTimer = null;
-    }
-
-    if (this.countdownTimer) {
-      clearInterval(this.countdownTimer);
-      this.countdownTimer = null;
     }
 
     this.seatCache.clear();
@@ -527,17 +482,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  payTransaction(transactionId: string): void {
-    const billUrl = this.uploadedImages.get(transactionId);
-    if (!billUrl) {
+  payTransaction(paymentData: PaymentData): void {
+    if (!paymentData.billUrl) {
       this.toastService.error('ไม่พบสลิป', 'กรุณาอัปโหลดสลิปการโอนเงินก่อน');
       return;
     }
 
-    this.isProcessing = transactionId;
+    this.isProcessing = paymentData.transactionId;
     this.cdr.detectChanges();
 
-    this.transactionService.payTransaction({ transactionId, billUrl })
+    this.transactionService.payTransaction(paymentData)
       .pipe(
         finalize(() => {
           this.isProcessing = null;
@@ -548,9 +502,39 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.status === 'success') {
-            this.toastService.success('ชำระเงินสำเร็จ', 'การชำระเงินเสร็จสิ้นแล้ว');
+            let successMessage = 'การชำระเงินเสร็จสิ้นแล้ว';
+            if (response.taxInvoiceId) {
+              successMessage += ` และได้บันทึกข้อมูลใบกำกับภาษีเลขที่ ${response.taxInvoiceId}`;
+            }
+            this.toastService.success('ชำระเงินสำเร็จ', successMessage);
             this.seatService.invalidateCache();
             this.transactionService.invalidateCache();
+
+            const currentResult = this.modalData as BookingResult;
+            const seatsData: BookingTransactionSeat[] = currentResult.bookedSeats?.map(seat => ({
+              zone: currentResult.zone || '',
+              row: seat.row,
+              column: parseInt(seat.display) || 0,
+              display: parseInt(seat.display) || null
+            })) || [];
+
+            const updatedTransaction: BookingTransaction = {
+              transactionId: currentResult.transactionId || '',
+              totalAmount: currentResult.totalPrice || 0,
+              Status: 2,
+              BillURL: paymentData.billUrl,
+              seats_data: seatsData
+            };
+
+            this.showDetailsModal = false;
+            this.cdr.detectChanges();
+
+            setTimeout(() => {
+              this.modalData = updatedTransaction;
+              this.modalMode = 'details';
+              this.showDetailsModal = true;
+              this.cdr.detectChanges();
+            }, 50);
 
             setTimeout(() => {
               this.loadAllBookings(true);
@@ -559,7 +543,6 @@ export class HomeComponent implements OnInit, OnDestroy {
               }
             }, 100);
 
-            this.closeDetailsModal();
           } else {
             this.toastService.error('ชำระเงินไม่สำเร็จ', response.message);
           }

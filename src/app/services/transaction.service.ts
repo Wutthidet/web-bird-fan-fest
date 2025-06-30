@@ -28,6 +28,10 @@ export interface BookingTransaction {
   transactionId: string;
   totalAmount: number;
   Status: 1 | 2 | 3;
+  TaxInName?: string | null;
+  TaxIDNo?: string | null;
+  TaxAddress?: string | null;
+  TaxMail?: string | null;
   BillURL?: string;
   BackURL1?: string;
   BackURL2?: string;
@@ -37,11 +41,19 @@ export interface BookingTransaction {
 export interface PayTransactionRequest {
   transactionId: string;
   billUrl: string;
+  Tax_need: boolean;
+  InName: string;
+  Tax_Name: string;
+  Tax_Identification_No: string;
+  Tax_Address: string;
+  Tax_Email: string;
+  Notes: string;
 }
 
 export interface PayTransactionResponse {
   status: 'success' | 'fail';
   message: string;
+  taxInvoiceId?: number;
 }
 
 export interface CancelTransactionRequest {
@@ -431,15 +443,46 @@ export class TransactionService implements OnDestroy {
   }
 
   private validatePaymentRequest(request: PayTransactionRequest): boolean {
-    return !!(
-      request?.transactionId &&
-      typeof request.transactionId === 'string' &&
-      request.transactionId.trim().length > 0 &&
-      request?.billUrl &&
-      typeof request.billUrl === 'string' &&
-      request.billUrl.trim().length > 0 &&
-      this.isValidUrl(request.billUrl)
-    );
+    if (!request?.transactionId ||
+      typeof request.transactionId !== 'string' ||
+      request.transactionId.trim().length === 0) {
+      return false;
+    }
+
+    if (!request?.billUrl ||
+      typeof request.billUrl !== 'string' ||
+      request.billUrl.trim().length === 0 ||
+      !this.isValidUrl(request.billUrl)) {
+      return false;
+    }
+
+    if (typeof request.Tax_need !== 'boolean') {
+      return false;
+    }
+
+    if (request.Tax_need) {
+      return !!(
+        request?.InName &&
+        typeof request.InName === 'string' &&
+        request.InName.trim().length > 0 &&
+        request?.Tax_Name &&
+        typeof request.Tax_Name === 'string' &&
+        request.Tax_Name.trim().length > 0 &&
+        request?.Tax_Identification_No &&
+        typeof request.Tax_Identification_No === 'string' &&
+        request.Tax_Identification_No.trim().length > 0 &&
+        request?.Tax_Address &&
+        typeof request.Tax_Address === 'string' &&
+        request.Tax_Address.trim().length > 0 &&
+        request?.Tax_Email &&
+        typeof request.Tax_Email === 'string' &&
+        request.Tax_Email.trim().length > 0 &&
+        request?.Notes !== undefined &&
+        typeof request.Notes === 'string'
+      );
+    }
+
+    return true;
   }
 
   private isValidUrl(string: string): boolean {

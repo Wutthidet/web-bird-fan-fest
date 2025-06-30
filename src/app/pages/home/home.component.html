@@ -1,47 +1,9 @@
 <div class="seat-booking">
   <div class="container">
-    <h1 class="title">ระบบจองที่นั่ง - Bird Fan Festival 20XX</h1>
+    <h1 class="title">ระบบจองที่นั่ง - BIRD FANFEST 20XX</h1>
 
     <div class="main-layout">
-      <div class="coming-soon-container">
-        <div class="coming-soon-content">
-          <h2 class="coming-soon-title">Coming Soon</h2>
-          <div class="announcement-details">
-            <p class="announcement-text">Charity Ticket Sale Opening Soon</p>
-            <div class="date-time-info">
-              <p class="date">1 July 2025</p>
-              <p class="time">09:00 AM</p>
-            </div>
-
-            <div class="countdown-container">
-              <div class="countdown-title">Time Remaining</div>
-              <div class="countdown-timer">
-                <div class="countdown-item">
-                  <div class="countdown-number">{{ timeRemaining.days }}</div>
-                  <div class="countdown-label">Days</div>
-                </div>
-                <div class="countdown-separator">:</div>
-                <div class="countdown-item">
-                  <div class="countdown-number">{{ timeRemaining.hours }}</div>
-                  <div class="countdown-label">Hours</div>
-                </div>
-                <div class="countdown-separator">:</div>
-                <div class="countdown-item">
-                  <div class="countdown-number">{{ timeRemaining.minutes }}</div>
-                  <div class="countdown-label">Minutes</div>
-                </div>
-                <div class="countdown-separator">:</div>
-                <div class="countdown-item">
-                  <div class="countdown-number">{{ timeRemaining.seconds }}</div>
-                  <div class="countdown-label">Seconds</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- <div class="map-container">
+      <div class="map-container">
         <app-zone-map
           [currentSelectedZone]="currentSelectedZone"
           (zoneClick)="onZoneClick($event)">
@@ -60,7 +22,7 @@
           (retryLoad)="loadAllBookings()"
           (bookingClick)="openDetailsModal('details', $event)">
         </app-bookings-card>
-      </div> -->
+      </div>
     </div>
   </div>
 </div>

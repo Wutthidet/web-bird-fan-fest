@@ -8,6 +8,7 @@ import { takeUntil, finalize, tap, startWith } from 'rxjs/operators';
 
 type AuthMode = 'login' | 'register';
 type ContactWay = 'Email' | 'Phone';
+type IdType = 'citizen' | 'passport';
 
 interface FormValidationState {
   isValid: boolean;
@@ -61,6 +62,7 @@ export class LoginComponent implements OnDestroy {
   isVisible = false;
   authMode: AuthMode = 'login';
   contactWay: ContactWay = 'Email';
+  idType: IdType = 'citizen';
 
   contact = '';
   otp = '';
@@ -85,7 +87,8 @@ export class LoginComponent implements OnDestroy {
   private readonly validationRules = {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     phone: /^[0-9]{10}$/,
-    idNumber: /^[0-9]{13}$/,
+    citizenId: /^[0-9]{13}$/,
+    passport: /^[A-Za-z0-9]{6,20}$/,
     otp: /^\d{6}$/
   };
 
@@ -137,6 +140,10 @@ export class LoginComponent implements OnDestroy {
     this.cdr.detectChanges();
   }
 
+  getIdLabel(): string {
+    return this.idType === 'citizen' ? 'เลขประจำตัวประชาชน' : 'หมายเลขพาสปอร์ต';
+  }
+
   sendOTP(): void {
     if (this.isLoading) return;
 
@@ -185,10 +192,13 @@ export class LoginComponent implements OnDestroy {
 
   private sendRegisterOTP() {
     const registerData = {
+      FirstName: this.firstName.trim(),
+      LastName: this.lastName.trim(),
       IdenNumber: this.idenNumber.trim(),
       Email: this.email.trim(),
       Tel: this.tel.trim(),
-      Way: this.contactWay
+      Way: this.contactWay,
+      IdType: this.idType
     };
 
     return this.authService.registerUser(registerData);
@@ -323,6 +333,7 @@ export class LoginComponent implements OnDestroy {
       Email: this.email.trim(),
       Tel: this.tel.trim(),
       Way: this.contactWay,
+      IdType: this.idType,
       otp: this.otp.trim()
     };
 
@@ -350,6 +361,7 @@ export class LoginComponent implements OnDestroy {
     this.address = '';
     this.email = '';
     this.tel = '';
+    this.idType = 'citizen';
     this.otpSent = false;
     this.isLoading = false;
     this.clearMessages();
@@ -418,15 +430,21 @@ export class LoginComponent implements OnDestroy {
 
     const idNumber = this.idenNumber.trim();
     if (!idNumber) {
-      errors.push('กรุณากรอกเลขประจำตัวประชาชน');
-    } else if (!this.validationRules.idNumber.test(idNumber)) {
-      errors.push('เลขประจำตัวประชาชนต้องมี 13 หลัก');
-    } else if (!this.isValidIDNumber(idNumber)) {
-      errors.push('เลขประจำตัวประชาชนไม่ถูกต้อง');
+      errors.push(`กรุณากรอก${this.getIdLabel()}`);
+    } else if (this.idType === 'citizen') {
+      if (!this.validationRules.citizenId.test(idNumber)) {
+        errors.push('เลขประจำตัวประชาชนต้องมี 13 หลัก');
+      } else if (!this.isValidIDNumber(idNumber)) {
+        errors.push('เลขประจำตัวประชาชนไม่ถูกต้อง');
+      }
+    } else if (this.idType === 'passport') {
+      if (!this.validationRules.passport.test(idNumber)) {
+        errors.push('หมายเลขพาสปอร์ตต้องมี 6-20 ตัวอักษร (ตัวอักษรและตัวเลข)');
+      }
     }
 
     if (!this.address.trim()) {
-      errors.push('กรุณากรอกที่อยู่');
+      errors.push('กรุณากรอกที่อยู่จัดส่ง');
     }
 
     const email = this.email.trim();
@@ -464,7 +482,7 @@ export class LoginComponent implements OnDestroy {
   }
 
   private isValidIDNumber(idNumber: string): boolean {
-    if (!this.validationRules.idNumber.test(idNumber)) return false;
+    if (!this.validationRules.citizenId.test(idNumber)) return false;
 
     const digits = idNumber.split('').map(Number);
     let sum = 0;

@@ -1,0 +1,95 @@
+<div class="donut-chart-container">
+  <div class="donut-chart">
+    <svg viewBox="0 0 200 200" class="donut-svg">
+      <circle cx="100" cy="100" r="80"
+        fill="none"
+        stroke="rgba(50, 130, 184, 0.1)"
+        stroke-width="20" />
+
+      <circle *ngIf="getNormalZonesCount() > 0"
+        cx="100" cy="100" r="80"
+        fill="none"
+        stroke="url(#normalGradient)"
+        stroke-width="20"
+        [attr.stroke-dasharray]="getNormalArcLength() + ' ' + (502.65 - getNormalArcLength())"
+        [attr.stroke-dashoffset]="0"
+        class="donut-segment normal-segment"
+        (click)="onNormalZonesClick()" />
+
+      <circle *ngIf="getWarningZonesCount() > 0"
+        cx="100" cy="100" r="80"
+        fill="none"
+        stroke="url(#warningGradient)"
+        stroke-width="20"
+        [attr.stroke-dasharray]="getWarningArcLength() + ' ' + (502.65 - getWarningArcLength())"
+        [attr.stroke-dashoffset]="-getNormalArcLength()"
+        class="donut-segment warning-segment"
+        (click)="onWarningZonesClick()" />
+
+      <circle *ngIf="getCriticalZonesCount() > 0"
+        cx="100" cy="100" r="80"
+        fill="none"
+        stroke="url(#criticalGradient)"
+        stroke-width="20"
+        [attr.stroke-dasharray]="getCriticalArcLength() + ' ' + (502.65 - getCriticalArcLength())"
+        [attr.stroke-dashoffset]="-(getNormalArcLength() + getWarningArcLength())"
+        class="donut-segment critical-segment"
+        (click)="onCriticalZonesClick()" />
+
+      <defs>
+        <linearGradient id="normalGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#38a169" />
+          <stop offset="100%" style="stop-color:#68d391" />
+        </linearGradient>
+        <linearGradient id="warningGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#dd6b20" />
+          <stop offset="100%" style="stop-color:#ed8936" />
+        </linearGradient>
+        <linearGradient id="criticalGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#e53e3e" />
+          <stop offset="100%" style="stop-color:#ff6b6b" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="donut-center">
+      <div class="center-value">{{ getOverallOccupancyRate() }}%</div>
+      <div class="center-label">อัตราการจอง</div>
+    </div>
+  </div>
+
+  <div class="donut-legend">
+    <div class="legend-item normal" (click)="onNormalZonesClick()">
+      <div class="legend-indicator">
+        <div class="legend-color"></div>
+        <span class="legend-count">{{ getNormalZonesCount() }}</span>
+      </div>
+      <div class="legend-info">
+        <span class="legend-title">ปกติ</span>
+        <span class="legend-desc">0-70%</span>
+      </div>
+    </div>
+
+    <div class="legend-item warning" (click)="onWarningZonesClick()">
+      <div class="legend-indicator">
+        <div class="legend-color"></div>
+        <span class="legend-count">{{ getWarningZonesCount() }}</span>
+      </div>
+      <div class="legend-info">
+        <span class="legend-title">เริ่มเต็ม</span>
+        <span class="legend-desc">71-90%</span>
+      </div>
+    </div>
+
+    <div class="legend-item critical" (click)="onCriticalZonesClick()">
+      <div class="legend-indicator">
+        <div class="legend-color"></div>
+        <span class="legend-count">{{ getCriticalZonesCount() }}</span>
+      </div>
+      <div class="legend-info">
+        <span class="legend-title">เกือบเต็ม</span>
+        <span class="legend-desc">91-100%</span>
+      </div>
+    </div>
+  </div>
+</div>

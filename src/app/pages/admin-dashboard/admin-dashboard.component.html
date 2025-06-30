@@ -58,19 +58,21 @@
 
     <div class="dashboard-content">
       <div *ngIf="activeTab === 'overview'" class="zone-stats-section">
-        <h2 class="section-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
-              stroke="currentColor" stroke-width="2" />
-            <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
-              stroke-width="2" />
-            <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
-              stroke-width="2" />
-            <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
-              stroke-width="2" />
-          </svg>
-          ภาพรวมที่นั่ง
-        </h2>
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"
+                stroke="currentColor" stroke-width="2" />
+              <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor"
+                stroke-width="2" />
+              <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor"
+                stroke-width="2" />
+              <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor"
+                stroke-width="2" />
+            </svg>
+            ภาพรวมที่นั่ง
+          </h2>
+        </div>
 
         <div *ngIf="loadingStates.zones" class="summary-cards">
           <app-skeleton-card *ngFor="let i of [1,2,3,4]"></app-skeleton-card>
@@ -96,67 +98,8 @@
 
         <div
           *ngIf="!loadingStates.zones && !errorStates.zones && zoneStats.length > 0">
-          <div class="summary-cards">
-            <div class="summary-card total-seats">
-              <div class="card-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="6" width="18" height="12" rx="2"
-                    stroke="currentColor" stroke-width="2" />
-                  <path d="M12 2v4M12 18v4" stroke="currentColor"
-                    stroke-width="2" />
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3 class="card-value">{{ getTotalSeats() | number }}</h3>
-                <p class="card-label">ที่นั่งทั้งหมด</p>
-              </div>
-            </div>
 
-            <div class="summary-card available-seats">
-              <div class="card-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor"
-                    stroke-width="2" />
-                  <polyline points="8,12 12,16 16,8" stroke="currentColor"
-                    stroke-width="2" />
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3 class="card-value">{{ getTotalAvailable() | number }}</h3>
-                <p class="card-label">ที่นั่งว่าง</p>
-              </div>
-            </div>
-
-            <div class="summary-card occupied-seats">
-              <div class="card-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="3" width="18" height="18" rx="2"
-                    stroke="currentColor" stroke-width="2" />
-                  <path d="M9 12l2 2 4-4" stroke="currentColor"
-                    stroke-width="2" />
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3 class="card-value">{{ getTotalOccupied() | number }}</h3>
-                <p class="card-label">จองแล้ว</p>
-              </div>
-            </div>
-
-            <div class="summary-card occupancy-rate">
-              <div class="card-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor"
-                    stroke-width="2" />
-                  <path d="M12 8v8M8 12h8" stroke="currentColor"
-                    stroke-width="2" />
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3 class="card-value">{{ getOverallOccupancyRate() }}%</h3>
-                <p class="card-label">อัตราการจอง</p>
-              </div>
-            </div>
-          </div>
+          <app-zone-stats-cards [zoneStats]="zoneStats"></app-zone-stats-cards>
 
           <div class="zones-chart-section">
             <h3 class="chart-title">
@@ -170,109 +113,8 @@
             </h3>
 
             <div class="chart-container">
-              <div class="donut-chart-container">
-                <div class="donut-chart">
-                  <svg viewBox="0 0 200 200" class="donut-svg">
-                    <circle cx="100" cy="100" r="80"
-                      fill="none"
-                      stroke="rgba(50, 130, 184, 0.1)"
-                      stroke-width="20" />
 
-                    <circle *ngIf="getNormalZonesCount() > 0"
-                      cx="100" cy="100" r="80"
-                      fill="none"
-                      stroke="url(#normalGradient)"
-                      stroke-width="20"
-                      [attr.stroke-dasharray]="getNormalArcLength() + ' ' + (502.65 - getNormalArcLength())"
-                      [attr.stroke-dashoffset]="0"
-                      class="donut-segment normal-segment"
-                      (click)="showNormalZones()" />
-
-                    <circle *ngIf="getWarningZonesCount() > 0"
-                      cx="100" cy="100" r="80"
-                      fill="none"
-                      stroke="url(#warningGradient)"
-                      stroke-width="20"
-                      [attr.stroke-dasharray]="getWarningArcLength() + ' ' + (502.65 - getWarningArcLength())"
-                      [attr.stroke-dashoffset]="-getNormalArcLength()"
-                      class="donut-segment warning-segment"
-                      (click)="showWarningZones()" />
-
-                    <circle *ngIf="getCriticalZonesCount() > 0"
-                      cx="100" cy="100" r="80"
-                      fill="none"
-                      stroke="url(#criticalGradient)"
-                      stroke-width="20"
-                      [attr.stroke-dasharray]="getCriticalArcLength() + ' ' + (502.65 - getCriticalArcLength())"
-                      [attr.stroke-dashoffset]="-(getNormalArcLength() + getWarningArcLength())"
-                      class="donut-segment critical-segment"
-                      (click)="showCriticalZones()" />
-
-                    <defs>
-                      <lineargradient id="normalGradient" x1="0%" y1="0%"
-                        x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#38a169" />
-                        <stop offset="100%" style="stop-color:#68d391" />
-                      </lineargradient>
-                      <lineargradient id="warningGradient" x1="0%" y1="0%"
-                        x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#dd6b20" />
-                        <stop offset="100%" style="stop-color:#ed8936" />
-                      </lineargradient>
-                      <lineargradient id="criticalGradient" x1="0%" y1="0%"
-                        x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#e53e3e" />
-                        <stop offset="100%" style="stop-color:#ff6b6b" />
-                      </lineargradient>
-                    </defs>
-                  </svg>
-
-                  <div class="donut-center">
-                    <div class="center-value">{{ getOverallOccupancyRate()
-                      }}%</div>
-                    <div class="center-label">อัตราการจอง</div>
-                  </div>
-                </div>
-
-                <div class="donut-legend">
-                  <div class="legend-item normal" (click)="showNormalZones()">
-                    <div class="legend-indicator">
-                      <div class="legend-color"></div>
-                      <span class="legend-count">{{ getNormalZonesCount()
-                        }}</span>
-                    </div>
-                    <div class="legend-info">
-                      <span class="legend-title">ปกติ</span>
-                      <span class="legend-desc">0-70%</span>
-                    </div>
-                  </div>
-
-                  <div class="legend-item warning" (click)="showWarningZones()">
-                    <div class="legend-indicator">
-                      <div class="legend-color"></div>
-                      <span class="legend-count">{{ getWarningZonesCount()
-                        }}</span>
-                    </div>
-                    <div class="legend-info">
-                      <span class="legend-title">เริ่มเต็ม</span>
-                      <span class="legend-desc">71-90%</span>
-                    </div>
-                  </div>
-
-                  <div class="legend-item critical"
-                    (click)="showCriticalZones()">
-                    <div class="legend-indicator">
-                      <div class="legend-color"></div>
-                      <span class="legend-count">{{ getCriticalZonesCount()
-                        }}</span>
-                    </div>
-                    <div class="legend-info">
-                      <span class="legend-title">เกือบเต็ม</span>
-                      <span class="legend-desc">91-100%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <app-donut-chart [zoneStats]="zoneStats"></app-donut-chart>
 
               <div class="group-comparison-bars">
                 <h4 class="bars-title">เปรียบเทียบกลุ่มโซน</h4>
@@ -601,7 +443,20 @@
                     *ngIf="filterOptions.dateFrom || filterOptions.dateTo || filterOptions.amountMin !== null || filterOptions.amountMax !== null || filterOptions.seatsMin !== null || filterOptions.seatsMax !== null"
                     class="filter-indicator"></span>
                 </button>
-
+                <button class="export-btn" (click)="openExportConfirmation()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                      stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                    <polyline points="7 10 12 15 17 10" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  ส่งออก Excel
+                </button>
                 <button class="clear-filters-btn" (click)="clearFilters()">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path
@@ -676,21 +531,48 @@
             </div>
           </div>
 
-          <div class="status-filters">
-            <button *ngFor="let filter of statusFilters; trackBy: trackByFilter"
-              class="filter-btn"
-              [class.active]="selectedStatusFilter === filter.status"
-              (click)="setStatusFilter(filter.status)">
-              <div class="filter-icon" [class]="'status-' + filter.status">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor"
-                    stroke-width="2" />
-                </svg>
+          <div class="combined-filters">
+            <div class="filter-group transaction-status-group">
+              <h4 class="filter-group-title">สถานะการจอง</h4>
+              <div class="filter-buttons">
+                <button
+                  *ngFor="let filter of statusFilters; trackBy: trackByFilter"
+                  class="filter-btn"
+                  [class.active]="selectedStatusFilter === filter.status"
+                  (click)="setStatusFilter(filter.status)">
+                  <div class="filter-icon" [class]="'status-' + filter.status">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="2" />
+                    </svg>
+                  </div>
+                  <span>{{ filter.label }}</span>
+                  <span class="filter-count">{{
+                    getFilteredCountByStatus(filter.status) }}</span>
+                </button>
               </div>
-              <span>{{ filter.label }}</span>
-              <span class="filter-count">{{
-                getFilteredCountByStatus(filter.status) }}</span>
-            </button>
+            </div>
+            <div class="filter-group tax-status-group">
+              <h4 class="filter-group-title">สถานะใบกำกับภาษี</h4>
+              <div class="filter-buttons">
+                <button
+                  *ngFor="let filter of taxStatusFilters; trackBy: trackByFilter"
+                  class="filter-btn"
+                  [class.active]="selectedTaxStatusFilter === filter.status"
+                  (click)="setTaxStatusFilter(filter.status)">
+                  <div class="filter-icon"
+                    [class]="'tax-status-' + filter.status">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"
+                        stroke="currentColor" stroke-width="2" />
+                    </svg>
+                  </div>
+                  <span>{{ filter.label }}</span>
+                  <span class="filter-count">{{
+                    getTaxFilteredCount(filter.status) }}</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -829,10 +711,10 @@
                       </svg>
                     </div>
                   </th>
-                  <th class="sortable" (click)="sortBy('seatsCount')">
+                  <th class="sortable" (click)="sortBy('Status')">
                     <div class="th-content">
-                      <span>ที่นั่ง</span>
-                      <svg class="sort-icon" [class]="getSortIcon('seatsCount')"
+                      <span>สถานะ</span>
+                      <svg class="sort-icon" [class]="getSortIcon('Status')"
                         width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
                           stroke="currentColor" stroke-width="2"
@@ -840,10 +722,10 @@
                       </svg>
                     </div>
                   </th>
-                  <th class="sortable" (click)="sortBy('Status')">
+                  <th class="sortable" (click)="sortBy('TaxStatus')">
                     <div class="th-content">
-                      <span>สถานะ</span>
-                      <svg class="sort-icon" [class]="getSortIcon('Status')"
+                      <span>ใบกำกับภาษี</span>
+                      <svg class="sort-icon" [class]="getSortIcon('TaxStatus')"
                         width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M8 9l4-4 4 4M16 15l-4 4-4-4"
                           stroke="currentColor" stroke-width="2"
@@ -904,21 +786,18 @@
                     <div class="amount-chip">{{
                       formatPrice(transaction.TotalAmount) }}</div>
                   </td>
-                  <td class="transaction-seats">
-                    <div class="seats-chip">
-                      <svg width="14" height="14" viewBox="0 0 24 24"
-                        fill="none">
-                        <rect x="3" y="6" width="18" height="12" rx="2"
-                          stroke="currentColor" stroke-width="2" />
-                      </svg>
-                      {{ transaction.seats_data.length }} ที่นั่ง
-                    </div>
-                  </td>
                   <td class="transaction-status">
                     <span class="modern-status-badge"
                       [class]="'status-' + transaction.Status">
                       <div class="status-indicator"></div>
                       {{ getStatusText(transaction.Status) }}
+                    </span>
+                  </td>
+                  <td class="transaction-tax-status">
+                    <span class="modern-status-badge"
+                      [class]="'tax-status-' + transaction.TaxStatus">
+                      <div class="status-indicator"></div>
+                      {{ getTaxStatusText(transaction.TaxStatus) }}
                     </span>
                   </td>
                   <td class="transaction-date">
@@ -962,6 +841,25 @@
                           <polyline points="20,6 9,17 4,12"
                             stroke="currentColor" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div *ngIf="isProcessing === transaction.transactionId"
+                          class="action-spinner"></div>
+                      </button>
+
+                      <button *ngIf="shouldShowApproveTaxButton(transaction)"
+                        class="modern-action-btn tax-approve-btn"
+                        (click)="approveTaxInvoice(transaction.transactionId)"
+                        [disabled]="isProcessing === transaction.transactionId"
+                        title="อนุมัติใบกำกับภาษี">
+                        <svg *ngIf="isProcessing !== transaction.transactionId"
+                          width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"
+                            stroke="currentColor" stroke-width="2" />
+                          <polyline points="9,11 12,14 22,4"
+                            stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
                         </svg>
                         <div *ngIf="isProcessing === transaction.transactionId"
                           class="action-spinner"></div>
@@ -1137,7 +1035,20 @@
                     *ngIf="seatLogsFilterOptions.dateFrom || seatLogsFilterOptions.dateTo || seatLogsFilterOptions.zone || seatLogsFilterOptions.user || seatLogsFilterOptions.action"
                     class="filter-indicator"></span>
                 </button>
-
+                <button class="export-btn" (click)="openExportConfirmation()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                      stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                    <polyline points="7 10 12 15 17 10" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  ส่งออก Excel
+                </button>
                 <button class="clear-filters-btn"
                   (click)="clearSeatLogsFilters()">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -1342,8 +1253,8 @@
                         <div class="user-name">
                           {{ log.firstName }} {{ log.lastName }}
                           <span *ngIf="log.isAdmin"
-                                class="admin-badge"
-                                [ngClass]="getAdminBadgeClass(log)">
+                            class="admin-badge"
+                            [ngClass]="getAdminBadgeClass(log)">
                             {{ getAdminBadgeText(log) }}
                           </span>
                         </div>
@@ -1568,7 +1479,7 @@
             <span>{{ selectedTransaction.Phone }}</span>
           </div>
           <div class="info-item">
-            <label>ที่อยู่:</label>
+            <label>ที่อยู่จัดส่ง:</label>
             <span>{{ selectedTransaction.Address }}</span>
           </div>
         </div>
@@ -1597,6 +1508,40 @@
         </div>
       </div>
 
+      <div class="tax-info-section" *ngIf="hasTaxData(selectedTransaction)">
+        <h4>ข้อมูลใบกำกับภาษี</h4>
+        <div class="info-grid">
+          <div class="info-item" *ngIf="selectedTransaction.TaxInName">
+            <label>ในนาม:</label>
+            <span>{{ selectedTransaction.TaxInName }}</span>
+          </div>
+          <div class="info-item" *ngIf="selectedTransaction.Tax_Name">
+            <label>ชื่อบริษัท:</label>
+            <span>{{ selectedTransaction.Tax_Name }}</span>
+          </div>
+          <div class="info-item" *ngIf="selectedTransaction.TaxIDNo">
+            <label>เลขประจำตัวผู้เสียภาษี:</label>
+            <span>{{ selectedTransaction.TaxIDNo }}</span>
+          </div>
+          <div class="info-item" *ngIf="selectedTransaction.TaxAddress">
+            <label>ที่อยู่ออกใบกำกับ:</label>
+            <span>{{ selectedTransaction.TaxAddress }}</span>
+          </div>
+          <div class="info-item" *ngIf="selectedTransaction.TaxMail">
+            <label>อีเมลใบกำกับ:</label>
+            <span>{{ selectedTransaction.TaxMail }}</span>
+          </div>
+          <div class="info-item">
+            <label>สถานะใบกำกับ:</label>
+            <span class="modern-status-badge"
+              [class]="'tax-status-' + selectedTransaction.TaxStatus">
+              <div class="status-indicator"></div>
+              {{ getTaxStatusText(selectedTransaction.TaxStatus) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
       <div class="seats-info-section">
         <h4>ที่นั่งที่จอง</h4>
         <div class="seats-grid">
@@ -1612,14 +1557,85 @@
         </div>
       </div>
 
-      <div
-        *ngIf="selectedTransaction.BillURL && (selectedTransaction.Status === 2 || selectedTransaction.Status === 3)"
-        class="bill-section">
-        <h4>สลิปการโอนเงิน</h4>
-        <div class="bill-container">
-          <img [src]="selectedTransaction.BillURL" alt="สลิปการโอนเงิน"
-            class="bill-image"
-            (click)="openImageModal(selectedTransaction.BillURL)">
+      <div class="detail-section">
+        <h4>รูปภาพที่แนบ</h4>
+        <div class="attached-images-grid">
+          <div *ngFor="let image of getAttachedImages(); trackBy: trackByImage"
+            class="image-item">
+            <div class="image-label">{{ image.label }}</div>
+            <div class="image-container">
+              <img *ngIf="image.url" [src]="image.url" [alt]="image.label"
+                class="attached-image"
+                (click)="openImageViewer(image.url, image.label)">
+              <div
+                *ngIf="!image.url && shouldShowBackImageUpload() && (image.type === 'back1' || image.type === 'back2')"
+                class="back-image-upload-area"
+                [class.dragover]="dragoverBackImage === selectedTransaction!.transactionId + '-' + (image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                (dragover)="onBackImageDragOver($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                (dragleave)="onBackImageDragLeave($event)"
+                (drop)="onBackImageDrop($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                (click)="selectBackImageFile(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')">
+
+                <div
+                  *ngIf="!getBackImageUrl(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                  class="upload-placeholder">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                      stroke="currentColor" stroke-width="2" />
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor"
+                      stroke-width="2" />
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor"
+                      stroke-width="2" />
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor"
+                      stroke-width="2" />
+                  </svg>
+                  <p>อัปโหลดรูป</p>
+                </div>
+
+                <div
+                  *ngIf="getBackImageUrl(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                  class="uploaded-back-image">
+                  <img
+                    [src]="getBackImageUrl(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                    [alt]="image.label">
+                  <button class="remove-back-image"
+                    (click)="removeBackImage($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+                        stroke-width="2" />
+                      <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+                        stroke-width="2" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div
+                  *ngIf="isUploadingBackImage === selectedTransaction!.transactionId + '-' + (image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                  class="uploading-overlay">
+                  <div class="upload-spinner"></div>
+                  <p>กำลังอัปโหลด...</p>
+                </div>
+
+                <input type="file"
+                  [id]="'back-file-input-' + selectedTransaction!.transactionId + '-' + (image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                  accept="image/*" style="display: none"
+                  (change)="onBackImageFileSelected($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')">
+              </div>
+              <div *ngIf="!image.url && !shouldShowBackImageUpload()"
+                class="no-image-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"
+                    stroke="currentColor" stroke-width="2" fill="none" />
+                  <circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor"
+                    stroke-width="2" fill="none" />
+                  <polyline points="21,15 16,10 5,21" stroke="currentColor"
+                    stroke-width="2" fill="none" />
+                </svg>
+                <span>ไม่มีรูป</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1649,8 +1665,8 @@
             <span>
               {{ selectedSeatLog.firstName }} {{ selectedSeatLog.lastName }}
               <span *ngIf="selectedSeatLog.isAdmin"
-                    class="admin-badge"
-                    [ngClass]="getAdminBadgeClass(selectedSeatLog)">
+                class="admin-badge"
+                [ngClass]="getAdminBadgeClass(selectedSeatLog)">
                 {{ getAdminBadgeText(selectedSeatLog) }}
               </span>
             </span>
@@ -1713,18 +1729,23 @@
   </div>
 </div>
 
-<div class="image-modal-overlay" [class.show]="showImageModal"
-  (click)="closeImageModal()">
-  <div class="image-modal-content" (click)="$event.stopPropagation()">
-    <button class="modal-close-btn" (click)="closeImageModal()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
-          stroke-width="2" />
-        <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
-          stroke-width="2" />
-      </svg>
-    </button>
-    <img [src]="selectedImageUrl" alt="สลิปการโอนเงิน" class="modal-image">
+<div *ngIf="showImageViewer" class="image-viewer-overlay"
+  (click)="closeImageViewer()">
+  <div class="image-viewer-container" (click)="$event.stopPropagation()">
+    <div class="image-viewer-header">
+      <h4>{{ viewerImageLabel }}</h4>
+      <button class="close-viewer-btn" (click)="closeImageViewer()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
+            stroke-width="2" />
+          <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor"
+            stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+    <div class="image-viewer-content">
+      <img [src]="viewerImageUrl" [alt]="viewerImageLabel" class="viewer-image">
+    </div>
   </div>
 </div>
 

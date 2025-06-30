@@ -5,10 +5,13 @@ import { retry, catchError, tap, takeUntil, shareReplay } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
 interface RegisterRequest {
+  FirstName: string;
+  LastName: string;
   IdenNumber: string;
   Email: string;
   Tel: string;
   Way: 'Email' | 'Phone';
+  IdType?: 'citizen' | 'passport';
 }
 
 interface RegisterResponse {
@@ -24,6 +27,7 @@ interface RegisterConfirmRequest {
   Email: string;
   Tel: string;
   Way: 'Email' | 'Phone';
+  IdType?: 'citizen' | 'passport';
   otp: string;
 }
 
@@ -58,6 +62,7 @@ interface UserData {
   Addr: string;
   Email: string;
   Tel: string;
+  IdType?: 'citizen' | 'passport';
   CreatedAt: string;
 }
 
@@ -74,6 +79,7 @@ interface UpdateUserRequest {
   IdenNumber: string;
   Email: string;
   Tel: string;
+  IdType?: 'citizen' | 'passport';
 }
 
 interface UpdateUserResponse {
@@ -225,8 +231,12 @@ export class AuthService implements OnDestroy {
       .pipe(
         tap(response => {
           if (response.status === 'success') {
+            const userData = {
+              ...response.data,
+              IdType: response.data.IdType || 'citizen' as 'citizen' | 'passport'
+            };
             this.userDataCache.set(cacheKey, {
-              data: response.data,
+              data: userData,
               timestamp: Date.now()
             });
           }

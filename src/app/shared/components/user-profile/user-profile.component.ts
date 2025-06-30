@@ -14,6 +14,7 @@ interface UserData {
   Addr: string;
   Email: string;
   Tel: string;
+  IdType: 'citizen' | 'passport';
   CreatedAt: string;
 }
 
@@ -26,7 +27,8 @@ interface FormValidationState {
 interface ValidationRules {
   email: RegExp;
   phone: RegExp;
-  idNumber: RegExp;
+  citizenId: RegExp;
+  passport: RegExp;
 }
 
 @Component({
@@ -69,7 +71,8 @@ export class UserProfilePopupComponent implements OnDestroy {
   private readonly validationRules: ValidationRules = {
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     phone: /^[0-9]{10}$/,
-    idNumber: /^[0-9]{13}$/
+    citizenId: /^[0-9]{13}$/,
+    passport: /^[A-Za-z0-9]{6,20}$/
   };
 
   isVisible = false;
@@ -111,6 +114,10 @@ export class UserProfilePopupComponent implements OnDestroy {
     this.cdr.detectChanges();
   }
 
+  getIdLabel(): string {
+    return this.userData?.IdType === 'citizen' ? 'เลขประจำตัวประชาชน' : 'หมายเลขพาสปอร์ต';
+  }
+
   loadUserData(): void {
     if (this.isLoading) return;
 
@@ -130,8 +137,11 @@ export class UserProfilePopupComponent implements OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.status === 'success') {
-            this.userData = { ...response.data };
-            this.originalUserData = { ...response.data };
+            this.userData = {
+              ...response.data,
+              IdType: (response.data as any).IdType || 'citizen'
+            };
+            this.originalUserData = { ...this.userData };
           } else {
             this.loadError = 'ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาลองใหม่อีกครั้ง';
           }
@@ -205,7 +215,8 @@ export class UserProfilePopupComponent implements OnDestroy {
       Addr: this.userData.Addr.trim(),
       IdenNumber: this.userData.IdenNumber.trim(),
       Email: this.userData.Email.trim(),
-      Tel: this.userData.Tel.trim()
+      Tel: this.userData.Tel.trim(),
+      IdType: this.userData.IdType
     };
   }
 
@@ -218,7 +229,6 @@ export class UserProfilePopupComponent implements OnDestroy {
 
     const trimmedData = this.getTrimmedData();
 
-    // Required fields validation
     if (!trimmedData.firstName) {
       errors.push('กรุณากรอกชื่อ');
     }
@@ -228,15 +238,21 @@ export class UserProfilePopupComponent implements OnDestroy {
     }
 
     if (!trimmedData.idenNumber) {
-      errors.push('กรุณากรอกเลขประจำตัวประชาชน');
-    } else if (!this.validationRules.idNumber.test(trimmedData.idenNumber)) {
-      errors.push('เลขประจำตัวประชาชนต้องมี 13 หลัก');
-    } else if (!this.isValidIDNumber(trimmedData.idenNumber)) {
-      errors.push('เลขประจำตัวประชาชนไม่ถูกต้อง');
+      errors.push(`กรุณากรอก${this.getIdLabel()}`);
+    } else if (this.userData.IdType === 'citizen') {
+      if (!this.validationRules.citizenId.test(trimmedData.idenNumber)) {
+        errors.push('เลขประจำตัวประชาชนต้องมี 13 หลัก');
+      } else if (!this.isValidIDNumber(trimmedData.idenNumber)) {
+        errors.push('เลขประจำตัวประชาชนไม่ถูกต้อง');
+      }
+    } else if (this.userData.IdType === 'passport') {
+      if (!this.validationRules.passport.test(trimmedData.idenNumber)) {
+        errors.push('หมายเลขพาสปอร์ตต้องมี 6-20 ตัวอักษร (ตัวอักษรและตัวเลข)');
+      }
     }
 
     if (!trimmedData.address) {
-      errors.push('กรุณากรอกที่อยู่');
+      errors.push('กรุณากรอกที่อยู่จัดส่ง');
     }
 
     if (!trimmedData.email) {
@@ -289,7 +305,8 @@ export class UserProfilePopupComponent implements OnDestroy {
       trimmedData.idenNumber !== this.originalUserData.IdenNumber ||
       trimmedData.address !== this.originalUserData.Addr ||
       trimmedData.email !== this.originalUserData.Email ||
-      trimmedData.tel !== this.originalUserData.Tel;
+      trimmedData.tel !== this.originalUserData.Tel ||
+      this.userData.IdType !== this.originalUserData.IdType;
   }
 
   formatDate(dateString: string): string {
@@ -312,7 +329,7 @@ export class UserProfilePopupComponent implements OnDestroy {
   }
 
   private isValidIDNumber(idNumber: string): boolean {
-    if (!this.validationRules.idNumber.test(idNumber)) return false;
+    if (!this.validationRules.citizenId.test(idNumber)) return false;
 
     const digits = idNumber.split('').map(Number);
     let sum = 0;

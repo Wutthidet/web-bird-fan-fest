@@ -1,7 +1,11 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnInit, OnDestroy, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ConfirmationModalComponent } from '../../../../shared/components/confirmation/confirmation.component';
 import { BookingTransaction, BookingTransactionSeat } from '../../../../services/transaction.service';
+import { AuthService } from '../../../../services/auth.service';
 
 interface BookedSeatInfo {
   row: string;
@@ -27,18 +31,31 @@ interface BookingResult {
   zone?: string;
 }
 
+interface TaxInvoiceForm {
+  Tax_need: boolean;
+  InName: 'Personal' | 'Company';
+  Tax_Name: string;
+  Tax_Identification_No: string;
+  Tax_Address: string;
+  Tax_Email: string;
+  Notes: string;
+  useExistingData: boolean;
+}
+
 type ModalData = BookingResult | BookingTransaction;
 type ModalMode = 'result' | 'details';
 
 @Component({
   selector: 'app-booking-details-modal',
   standalone: true,
-  imports: [CommonModule, ConfirmationModalComponent],
+  imports: [CommonModule, FormsModule, ConfirmationModalComponent],
   templateUrl: './booking-details-modal.component.html',
   styleUrls: ['./booking-details-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BookingDetailsModalComponent {
+export class BookingDetailsModalComponent implements OnInit, OnDestroy, OnChanges {
+  private readonly destroy$ = new Subject<void>();
+
   @Input() show = false;
   @Input() mode: ModalMode | null = null;
   @Input() data: ModalData | null = null;
@@ -52,7 +69,7 @@ export class BookingDetailsModalComponent {
   @Output() close = new EventEmitter<void>();
   @Output() fileUpload = new EventEmitter<{ file: File; transactionId: string }>();
   @Output() removeImage = new EventEmitter<{ event: Event; transactionId: string }>();
-  @Output() payTransaction = new EventEmitter<string>();
+  @Output() payTransaction = new EventEmitter<any>();
   @Output() cancelTransaction = new EventEmitter<string>();
   @Output() cancelConfirmed = new EventEmitter<void>();
   @Output() cancelCancelled = new EventEmitter<void>();
@@ -60,6 +77,35 @@ export class BookingDetailsModalComponent {
   showImageViewer = false;
   viewerImageUrl = '';
   viewerImageLabel = '';
+  showTaxInfoModal = false;
+
+  taxInvoiceForm: TaxInvoiceForm = {
+    Tax_need: false,
+    InName: 'Personal',
+    Tax_Name: '',
+    Tax_Identification_No: '',
+    Tax_Address: '',
+    Tax_Email: '',
+    Notes: '',
+    useExistingData: false
+  };
+
+  constructor(private authService: AuthService) { }
+
+  ngOnInit(): void {
+    this.loadUserDataIfNeeded();
+  }
+
+  ngOnChanges(): void {
+    console.log('Modal data:', this.data);
+    console.log('Modal mode:', this.mode);
+    console.log('Seats data:', this.getModalSeatsData());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   onCloseModal(): void {
     this.close.emit();
@@ -101,7 +147,18 @@ export class BookingDetailsModalComponent {
   }
 
   onPayTransaction(transactionId: string): void {
-    this.payTransaction.emit(transactionId);
+    const paymentData = {
+      transactionId,
+      billUrl: this.getUploadedImage(transactionId),
+      Tax_need: this.taxInvoiceForm.Tax_need,
+      InName: this.taxInvoiceForm.Tax_need ? this.taxInvoiceForm.InName : null,
+      Tax_Name: this.taxInvoiceForm.Tax_need ? this.taxInvoiceForm.Tax_Name : null,
+      Tax_Identification_No: this.taxInvoiceForm.Tax_need ? this.taxInvoiceForm.Tax_Identification_No : null,
+      Tax_Address: this.taxInvoiceForm.Tax_need ? this.taxInvoiceForm.Tax_Address : null,
+      Tax_Email: this.taxInvoiceForm.Tax_need ? this.taxInvoiceForm.Tax_Email : null,
+      Notes: this.taxInvoiceForm.Tax_need ? this.taxInvoiceForm.Notes : null
+    };
+    this.payTransaction.emit(paymentData);
   }
 
   onCancelTransaction(transactionId: string): void {
@@ -116,6 +173,30 @@ export class BookingDetailsModalComponent {
     this.cancelCancelled.emit();
   }
 
+  onTaxNeedChange(): void {
+    if (this.taxInvoiceForm.Tax_need && this.taxInvoiceForm.useExistingData) {
+      this.loadUserDataToForm();
+    }
+  }
+
+  onUseExistingDataChange(): void {
+    if (this.taxInvoiceForm.useExistingData) {
+      this.taxInvoiceForm.InName = 'Personal';
+      this.loadUserDataToForm();
+    } else {
+      this.clearTaxForm();
+    }
+  }
+
+  onInNameChange(): void {
+    if (this.taxInvoiceForm.useExistingData && this.taxInvoiceForm.InName === 'Company') {
+      this.taxInvoiceForm.InName = 'Personal';
+    }
+    if (this.taxInvoiceForm.useExistingData) {
+      this.loadUserDataToForm();
+    }
+  }
+
   openImageViewer(imageUrl: string, imageLabel: string): void {
     this.viewerImageUrl = imageUrl;
     this.viewerImageLabel = imageLabel;
@@ -126,6 +207,19 @@ export class BookingDetailsModalComponent {
     this.showImageViewer = false;
     this.viewerImageUrl = '';
     this.viewerImageLabel = '';
+  }
+
+  hasTaxData(): boolean {
+    const transaction = this.data as BookingTransaction;
+    return !!(transaction?.TaxInName || transaction?.TaxIDNo || transaction?.TaxAddress || transaction?.TaxMail);
+  }
+
+  showTaxInfo(): void {
+    this.showTaxInfoModal = true;
+  }
+
+  closeTaxInfo(): void {
+    this.showTaxInfoModal = false;
   }
 
   formatPrice(price: number): string {
@@ -169,6 +263,10 @@ export class BookingDetailsModalComponent {
     return false;
   };
 
+  showTaxInvoiceCard = (): boolean => {
+    return this.showPaymentCard() && this.taxInvoiceForm.Tax_need;
+  };
+
   shouldShowAttachedImages = (): boolean => {
     if (!this.isDetailsMode() || !this.data) return false;
     const status = (this.data as BookingTransaction).Status;
@@ -182,10 +280,19 @@ export class BookingDetailsModalComponent {
   getModalMessage = (): string | undefined => (this.data as BookingResult)?.message;
   getModalBookedSeats = (): BookedSeatInfo[] | undefined => (this.data as BookingResult)?.bookedSeats;
   getModalFailedSeats = (): FailedSeatInfo[] | undefined => (this.data as BookingResult)?.failedSeats;
-  getModalSeatsData = (): BookingTransactionSeat[] | undefined => (this.data as BookingTransaction)?.seats_data;
+  getModalSeatsData = (): BookingTransactionSeat[] | undefined => {
+    if (this.isDetailsMode() && this.data) {
+      return (this.data as BookingTransaction)?.seats_data;
+    }
+    return undefined;
+  };
   getModalBillURL = (): string | undefined => (this.data as BookingTransaction)?.BillURL;
   getModalBackURL1 = (): string | undefined => (this.data as BookingTransaction)?.BackURL1;
   getModalBackURL2 = (): string | undefined => (this.data as BookingTransaction)?.BackURL2;
+  getModalTaxInName = (): string | null => (this.data as BookingTransaction)?.TaxInName || null;
+  getModalTaxIDNo = (): string | null => (this.data as BookingTransaction)?.TaxIDNo || null;
+  getModalTaxAddress = (): string | null => (this.data as BookingTransaction)?.TaxAddress || null;
+  getModalTaxMail = (): string | null => (this.data as BookingTransaction)?.TaxMail || null;
 
   getAttachedImages(): Array<{ url?: string; label: string }> {
     return [
@@ -209,5 +316,37 @@ export class BookingDetailsModalComponent {
 
   trackByImage(index: number, image: { url?: string; label: string }): string {
     return `${index}-${image.label}`;
+  }
+
+  private loadUserDataIfNeeded(): void {
+    if (this.taxInvoiceForm.useExistingData) {
+      this.loadUserDataToForm();
+    }
+  }
+
+  private loadUserDataToForm(): void {
+    this.authService.getUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.status === 'success') {
+            const userData = response.data;
+            this.taxInvoiceForm.Tax_Name = `${userData.FirstName} ${userData.LastName}`;
+            this.taxInvoiceForm.Tax_Identification_No = userData.IdenNumber;
+            this.taxInvoiceForm.Tax_Address = userData.Addr;
+            this.taxInvoiceForm.Tax_Email = userData.Email;
+          }
+        },
+        error: (error) => {
+          console.error('Failed to load user data:', error);
+        }
+      });
+  }
+
+  private clearTaxForm(): void {
+    this.taxInvoiceForm.Tax_Name = '';
+    this.taxInvoiceForm.Tax_Identification_No = '';
+    this.taxInvoiceForm.Tax_Address = '';
+    this.taxInvoiceForm.Tax_Email = '';
   }
 }

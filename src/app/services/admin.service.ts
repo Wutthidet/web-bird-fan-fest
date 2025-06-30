@@ -26,8 +26,17 @@ export interface AdminTransaction {
   Address: string;
   TotalAmount: number;
   BillURL: string | null;
+  BackURL1: string | null;
+  BackURL2: string | null;
   Status: 1 | 2 | 3;
   CreatedAt: string;
+  BookExpired: string;
+  TaxStatus: 0 | 1 | 2 | 3;
+  TaxInName: string | null;
+  Tax_Name: string | null;
+  TaxIDNo: string | null;
+  TaxAddress: string | null;
+  TaxMail: string | null;
   seats_data: {
     zone: string;
     row: string;
@@ -55,6 +64,26 @@ export interface CancelTransactionRequest {
 }
 
 export interface CancelTransactionResponse {
+  status: 'success' | 'fail';
+  message: string;
+}
+
+export interface ApproveTaxInvoiceRequest {
+  transactionId: string;
+}
+
+export interface ApproveTaxInvoiceResponse {
+  status: 'success' | 'fail';
+  message: string;
+}
+
+export interface UploadBackImageRequest {
+  transactionId: string;
+  backUrl1?: string;
+  backUrl2?: string;
+}
+
+export interface UploadBackImageResponse {
   status: 'success' | 'fail';
   message: string;
 }
@@ -322,10 +351,92 @@ export class AdminService implements OnDestroy {
       );
   }
 
+  approveTaxInvoice(request: ApproveTaxInvoiceRequest): Observable<ApproveTaxInvoiceResponse> {
+    const token = this.authService.getToken();
+    if (!token) {
+      return throwError(() => new Error('No authentication token found'));
+    }
+
+    if (!this.authService.isAdmin()) {
+      return throwError(() => new Error('Admin access required'));
+    }
+
+    const headers = this.createHeaders(token);
+
+    return this.http.post<ApproveTaxInvoiceResponse>(`${this.baseUrl}/approveTaxInvoice`, request, { headers })
+      .pipe(
+        tap(response => {
+          if (response.status === 'success') {
+            this.invalidateCache();
+          }
+        }),
+        retryWhen(errors =>
+          errors.pipe(
+            tap(error => {
+              if (error.status === 400 || error.status === 422) {
+                throwError(() => error);
+              }
+            }),
+            delay(this.RETRY_DELAY),
+            take(2)
+          )
+        ),
+        catchError(this.handleError.bind(this)),
+        takeUntil(this.destroy$)
+      );
+  }
+
+  uploadBackImage(request: UploadBackImageRequest): Observable<UploadBackImageResponse> {
+    if (!request.transactionId || typeof request.transactionId !== 'string' || request.transactionId.trim().length === 0) {
+      return throwError(() => new Error('Transaction ID is required'));
+    }
+
+    if (!request.backUrl1 && !request.backUrl2) {
+      return throwError(() => new Error('At least one backup URL is required'));
+    }
+
+    const token = this.authService.getToken();
+    if (!token) {
+      return throwError(() => new Error('No authentication token found'));
+    }
+
+    if (!this.authService.isAdmin()) {
+      return throwError(() => new Error('Admin access required'));
+    }
+
+    const headers = this.createHeaders(token);
+
+    return this.http.post<UploadBackImageResponse>(`${this.baseUrl}/uploadBackImage`, request, { headers })
+      .pipe(
+        tap(response => {
+          if (response.status === 'success') {
+            this.invalidateCache();
+          }
+        }),
+        retryWhen(errors =>
+          errors.pipe(
+            delay(this.RETRY_DELAY),
+            take(2)
+          )
+        ),
+        catchError(this.handleError.bind(this)),
+        takeUntil(this.destroy$)
+      );
+  }
+
   getTransactionsByStatus(status: 1 | 2 | 3): Observable<AdminTransaction[]> {
     return this.getAllTransactions().pipe(
       map(response => {
         return response.data.filter(t => t.Status === status);
+      }),
+      takeUntil(this.destroy$)
+    );
+  }
+
+  getTransactionsByTaxStatus(taxStatus: 0 | 1 | 2 | 3): Observable<AdminTransaction[]> {
+    return this.getAllTransactions().pipe(
+      map(response => {
+        return response.data.filter(t => t.TaxStatus === taxStatus);
       }),
       takeUntil(this.destroy$)
     );
