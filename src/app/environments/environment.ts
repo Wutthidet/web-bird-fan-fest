@@ -1,9 +1,8 @@
 export const environment = {
   production: false,
   apiUrl: 'https://aticket-api.ampolfood.com/api',
-  imgbb: {
-    apiUrl: 'https://api.imgbb.com/1/upload',
-    apiKey: '62e768cda1cad5a0b7e3930058a3a561'
+  imageUpload: {
+    apiUrl: 'https://ai.ampolfood.com:5555/webhook/2d3b5473-9607-4235-b062-652cfc8187db'
   },
   tokenExpireTime: 3600,
   cacheDuration: {

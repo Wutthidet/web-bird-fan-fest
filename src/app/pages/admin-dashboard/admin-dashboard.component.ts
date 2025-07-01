@@ -1095,14 +1095,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response) => {
-          if (response.success && response.data?.url) {
+          if (response.success && response.data?.display_url) {
             const currentImages = this.uploadedBackImages.get(transactionId) || {};
-            currentImages[imageType] = response.data.url;
+            currentImages[imageType] = response.data.display_url;
             this.uploadedBackImages.set(transactionId, currentImages);
 
             this.adminService.uploadBackImage({
               transactionId,
-              [imageType]: response.data.url
+              [imageType]: response.data.display_url
             }).subscribe({
               next: (uploadResponse) => {
                 if (uploadResponse.status === 'success') {

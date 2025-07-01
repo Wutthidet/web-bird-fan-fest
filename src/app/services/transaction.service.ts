@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, Subject, BehaviorSubject, timer } from 'rxjs';
-import { catchError, takeUntil, tap, retry, finalize, shareReplay, retryWhen, delay, take } from 'rxjs/operators';
+import { catchError, takeUntil, tap, retry, finalize, shareReplay, retryWhen, delay, take, map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { environment } from '../environments/environment';
 
@@ -65,40 +65,85 @@ export interface CancelTransactionResponse {
   message: string;
 }
 
+export interface DriveFileMetadata {
+  kind: string;
+  id: string;
+  name: string;
+  mimeType: string;
+  starred: boolean;
+  trashed: boolean;
+  explicitlyTrashed: boolean;
+  parents: string[];
+  spaces: string[];
+  version: string;
+  webContentLink: string;
+  webViewLink: string;
+  iconLink: string;
+  hasThumbnail: boolean;
+  thumbnailLink: string;
+  thumbnailVersion: string;
+  viewedByMe: boolean;
+  createdTime: string;
+  modifiedTime: string;
+  modifiedByMeTime: string;
+  modifiedByMe: boolean;
+  owners: Array<{
+    kind: string;
+    displayName: string;
+    photoLink: string;
+    me: boolean;
+    permissionId: string;
+    emailAddress: string;
+  }>;
+  lastModifyingUser: {
+    kind: string;
+    displayName: string;
+    photoLink: string;
+    me: boolean;
+    permissionId: string;
+    emailAddress: string;
+  };
+  shared: boolean;
+  ownedByMe: boolean;
+  capabilities: any;
+  viewersCanCopyContent: boolean;
+  copyRequiresWriterPermission: boolean;
+  writersCanShare: boolean;
+  permissions: any[];
+  permissionIds: string[];
+  originalFilename: string;
+  fullFileExtension: string;
+  fileExtension: string;
+  md5Checksum: string;
+  sha1Checksum: string;
+  sha256Checksum: string;
+  size: string;
+  quotaBytesUsed: string;
+  headRevisionId: string;
+  imageMediaMetadata?: {
+    width: number;
+    height: number;
+    rotation: number;
+  };
+  isAppAuthorized: boolean;
+  linkShareMetadata: {
+    securityUpdateEligible: boolean;
+    securityUpdateEnabled: boolean;
+  };
+  inheritedPermissionsDisabled: boolean;
+}
+
 export interface ImageUploadResponse {
   data: {
     id: string;
-    title: string;
-    url_viewer: string;
     url: string;
     display_url: string;
-    width: string;
-    height: string;
+    webViewLink: string;
+    webContentLink: string;
+    thumbnailLink: string;
     size: string;
-    time: string;
-    expiration: string;
-    image: {
-      filename: string;
-      name: string;
-      mime: string;
-      extension: string;
-      url: string;
-    };
-    thumb: {
-      filename: string;
-      name: string;
-      mime: string;
-      extension: string;
-      url: string;
-    };
-    medium: {
-      filename: string;
-      name: string;
-      mime: string;
-      extension: string;
-      url: string;
-    };
-    delete_url: string;
+    mimeType: string;
+    name: string;
   };
   success: boolean;
   status: number;
@@ -121,8 +166,7 @@ interface UploadProgress {
 })
 export class TransactionService implements OnDestroy {
   private readonly baseUrl = environment.apiUrl;
-  private readonly imgbbApiKey = environment.imgbb.apiKey;
-  private readonly imgbbUrl = environment.imgbb.apiUrl;
+  private readonly imageUploadUrl = environment.imageUpload.apiUrl;
   private readonly destroy$ = new Subject<void>();
 
   private readonly transactionCache = new Map<string, CachedTransactions>();
@@ -287,35 +331,60 @@ export class TransactionService implements OnDestroy {
       return throwError(() => new Error('Invalid file'));
     }
 
-    const formData = new FormData();
-    formData.append('image', imageFile);
-
     const transactionId = Date.now().toString();
     this.updateUploadProgress(transactionId, 0, 'uploading');
 
-    return this.http.post<ImageUploadResponse>(
-      `${this.imgbbUrl}?expiration=600&key=${this.imgbbApiKey}`,
-      formData
-    ).pipe(
-      tap(() => this.updateUploadProgress(transactionId, 100, 'success')),
-      retryWhen(errors =>
-        errors.pipe(
-          tap(() => this.updateUploadProgress(transactionId, 0, 'error')),
-          delay(this.RETRY_DELAY),
-          take(2)
-        )
-      ),
-      catchError(error => {
-        this.updateUploadProgress(transactionId, 0, 'error');
-        return this.handleUploadError(error);
-      }),
-      finalize(() => {
-        setTimeout(() => {
-          this.removeUploadProgress(transactionId);
-        }, 3000);
-      }),
-      takeUntil(this.destroy$)
-    );
+    const headers = new HttpHeaders({
+      'Content-Type': imageFile.type
+    });
+
+    return this.http.post<DriveFileMetadata[]>(this.imageUploadUrl, imageFile, { headers })
+      .pipe(
+        tap(() => this.updateUploadProgress(transactionId, 100, 'success')),
+        retryWhen(errors =>
+          errors.pipe(
+            tap(() => this.updateUploadProgress(transactionId, 0, 'error')),
+            delay(this.RETRY_DELAY),
+            take(2)
+          )
+        ),
+        catchError(error => {
+          this.updateUploadProgress(transactionId, 0, 'error');
+          return this.handleUploadError(error);
+        }),
+        finalize(() => {
+          setTimeout(() => {
+            this.removeUploadProgress(transactionId);
+          }, 3000);
+        }),
+        takeUntil(this.destroy$)
+      ).pipe(
+        map(driveResponse => {
+          if (Array.isArray(driveResponse) && driveResponse.length > 0) {
+            const file = driveResponse[0];
+            const directUrl = this.convertToDirectLink(file.webViewLink);
+            const displayUrl = this.getDisplayableUrl(file);
+
+            return {
+              data: {
+                id: file.id,
+                url: directUrl,
+                display_url: displayUrl,
+                webViewLink: file.webViewLink,
+                webContentLink: file.webContentLink,
+                thumbnailLink: file.thumbnailLink,
+                size: file.size,
+                mimeType: file.mimeType,
+                name: file.name
+              },
+              success: true,
+              status: 200
+            } as ImageUploadResponse;
+          } else {
+            throw new Error('Invalid response from upload service');
+          }
+        })
+      );
   }
 
   payTransaction(request: PayTransactionRequest): Observable<PayTransactionResponse> {
@@ -410,6 +479,43 @@ export class TransactionService implements OnDestroy {
     const oldestEntry = timestamps.length > 0 ? Math.min(...timestamps) : null;
 
     return { size: this.transactionCache.size, keys, oldestEntry };
+  }
+
+  private convertToDirectLink(webViewLink: string): string {
+    try {
+      const fileIdMatch = webViewLink.match(/\/file\/d\/([a-zA-Z0-9_-]+)\//);
+      if (fileIdMatch) {
+        const fileId = fileIdMatch[1];
+        return `https://drive.google.com/uc?export=download&id=${fileId}`;
+      }
+      return webViewLink;
+    } catch (error) {
+      console.warn('Failed to convert webViewLink to direct link:', error);
+      return webViewLink;
+    }
+  }
+
+  private getDisplayableUrl(file: DriveFileMetadata): string {
+    try {
+      if (file.thumbnailLink) {
+        return file.thumbnailLink.replace('=s220', '=s800');
+      }
+
+      const fileIdMatch = file.webViewLink.match(/\/file\/d\/([a-zA-Z0-9_-]+)\//);
+      if (fileIdMatch) {
+        const fileId = fileIdMatch[1];
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+      }
+
+      if (file.webContentLink) {
+        return file.webContentLink;
+      }
+
+      return this.convertToDirectLink(file.webViewLink);
+    } catch (error) {
+      console.warn('Failed to get displayable URL:', error);
+      return this.convertToDirectLink(file.webViewLink);
+    }
   }
 
   private createHeaders(token: string): HttpHeaders {
