@@ -128,11 +128,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.cleanup();
   }
-
   private initializeData(): void {
-    if (this.authService.isLoggedIn()) {
-      this.loadAllBookings();
-    }
+    this.authService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        if (user?.token) {
+          this.loadAllBookings();
+        } else {
+          this.allBookings = [];
+          this.isLoadingBookings = false;
+          this.bookingError = '';
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   private setupAutoRefresh(): void {

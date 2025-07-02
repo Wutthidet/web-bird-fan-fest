@@ -174,7 +174,6 @@ export class TransactionService implements OnDestroy {
   private readonly uploadProgress$ = new BehaviorSubject<Map<string, UploadProgress>>(new Map());
 
   private readonly CACHE_DURATION = environment.cacheDuration.transaction;
-  private readonly MAX_CACHE_SIZE = 10;
   private readonly RETRY_COUNT = 3;
   private readonly RETRY_DELAY = 1000;
   private readonly MAX_FILE_SIZE = 16 * 1024 * 1024;
