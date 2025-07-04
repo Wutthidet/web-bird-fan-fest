@@ -79,9 +79,11 @@ export interface ApproveTaxInvoiceResponse {
 
 export interface UploadBackImageRequest {
   transactionId: string;
+  billUrl?: string;
   backUrl1?: string;
   backUrl2?: string;
 }
+
 
 export interface UploadBackImageResponse {
   status: 'success' | 'fail';
@@ -391,8 +393,8 @@ export class AdminService implements OnDestroy {
       return throwError(() => new Error('Transaction ID is required'));
     }
 
-    if (!request.backUrl1 && !request.backUrl2) {
-      return throwError(() => new Error('At least one backup URL is required'));
+    if (!request.billUrl && !request.backUrl1 && !request.backUrl2) {
+      return throwError(() => new Error('At least one image is required'));
     }
 
     const token = this.authService.getToken();

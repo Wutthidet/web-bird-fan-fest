@@ -2539,6 +2539,34 @@
       font-size: 0.9rem;
       text-align: center;
       border-bottom: 1px solid rgba(50, 130, 184, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .upload-replace-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        background: rgba(72, 185, 235, 0.2);
+        border: 1px solid rgba(72, 185, 235, 0.3);
+        color: #48b9eb;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.8rem;
+        font-weight: 600;
+
+        &:hover {
+          background: rgba(72, 185, 235, 0.3);
+          color: #BBE1FA;
+          transform: translateY(-1px);
+        }
+
+        svg {
+          flex-shrink: 0;
+        }
+      }
     }
 
     .image-container {

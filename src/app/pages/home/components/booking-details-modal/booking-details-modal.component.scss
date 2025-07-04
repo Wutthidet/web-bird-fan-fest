@@ -135,13 +135,13 @@
 
   .details-modal-container {
     display: grid;
-    grid-template-columns: 550px 550px;
+    grid-template-columns: 500px 500px;
     gap: 1.5rem;
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 
     &.single-card {
-      grid-template-columns: 550px;
+      grid-template-columns: 600px;
 
       .booking-info-card {
         height: 720px;
@@ -164,7 +164,7 @@
     }
 
     &.three-cards {
-      grid-template-columns: 550px 550px 550px;
+      grid-template-columns: 500px 500px 500px;
       gap: 1.5rem;
 
       .main-cards-group {
@@ -895,7 +895,7 @@
   flex-shrink: 0;
 
   .payment-qr-image {
-    max-width: 280px;
+    max-width: 550px;
     width: 100%;
     height: auto;
     border-radius: 12px;
@@ -1615,7 +1615,7 @@
       }
 
       &.single-card {
-        grid-template-columns: 550px;
+        grid-template-columns: 600px;
       }
     }
   }

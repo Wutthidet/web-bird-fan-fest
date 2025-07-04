@@ -252,6 +252,14 @@ export class BookingDetailsModalComponent implements OnInit, OnDestroy, OnChange
     return this.uploadedImages.get(transactionId);
   }
 
+  getUploadedImagePreview(transactionId: string): string | undefined {
+    const base64 = this.uploadedImages.get(transactionId);
+    if (base64 && base64.startsWith('data:image/')) {
+      return base64;
+    }
+    return undefined;
+  }
+
   isResultMode = (): boolean => this.mode === 'result';
   isDetailsMode = (): boolean => this.mode === 'details';
   isResultSuccess = (): boolean => this.isResultMode() && (this.data as BookingResult)?.success;

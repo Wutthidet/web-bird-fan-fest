@@ -25,7 +25,7 @@ interface ConfirmationData {
   message: string;
   confirmText: string;
   cancelText: string;
-  action: 'approve' | 'cancel' | 'refresh' | 'clear-data' | 'export-data' | 'bulk-approve' | 'bulk-cancel' | 'approve-tax';
+  action: 'approve' | 'cancel' | 'refresh' | 'clear-data' | 'export-data' | 'bulk-approve' | 'bulk-cancel' | 'approve-tax' | 'upload-back-image';
   confirmationType?: 'danger' | 'confirm' | 'info';
   transactionId?: string;
   additionalData?: any;
@@ -154,7 +154,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     'SF': 'middle', 'SG': 'middle', 'SH': 'middle', 'SI': 'middle',
     'SJ': 'middle', 'SK': 'middle', 'SL': 'middle', 'SM': 'middle', 'SN': 'middle'
   };
+  private pendingImageUpload: { file: File, transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2' } | null = null;
   private pendingRequests = new Set<string>();
+
 
   public retryCount = 0;
   public lastRefreshTime: Date | null = null;
@@ -264,7 +266,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   public showImageViewer = false;
   public viewerImageUrl = '';
   public viewerImageLabel = '';
-  public uploadedBackImages = new Map<string, { backUrl1?: string; backUrl2?: string }>();
+  public uploadedBackImages = new Map<string, { billUrl?: string, backUrl1?: string; backUrl2?: string }>();
   public isUploadingBackImage: string | null = null;
   public dragoverBackImage: string | null = null;
 
@@ -563,7 +565,13 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         break;
       case 'refresh':
         this.refreshAllData();
-        this.isProcessing = null;
+        break;
+      case 'upload-back-image':
+        if (this.pendingImageUpload) {
+          const { file, transactionId, imageType } = this.pendingImageUpload;
+          this.uploadBackImage(file, transactionId, imageType);
+          this.pendingImageUpload = null;
+        }
         break;
       case 'clear-data':
         this.clearAllData();
@@ -581,6 +589,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   onConfirmationCancelled(): void {
     this.showConfirmation = false;
     this.isProcessing = null;
+    this.pendingImageUpload = null;
   }
 
   openExportConfirmation(): void {
@@ -665,44 +674,69 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  onBackImageDragOver(event: DragEvent, transactionId: string, imageType: 'backUrl1' | 'backUrl2'): void {
+  onBackImageDragOver(event: DragEvent, transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): void {
     event.preventDefault();
+    event.stopPropagation();
     this.dragoverBackImage = `${transactionId}-${imageType}`;
-    this.cdr.detectChanges();
   }
 
   onBackImageDragLeave(event: DragEvent): void {
     event.preventDefault();
+    event.stopPropagation();
     this.dragoverBackImage = null;
-    this.cdr.detectChanges();
   }
 
-  onBackImageDrop(event: DragEvent, transactionId: string, imageType: 'backUrl1' | 'backUrl2'): void {
+  onBackImageDrop(event: DragEvent, transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): void {
     event.preventDefault();
+    event.stopPropagation();
     this.dragoverBackImage = null;
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      this.uploadBackImage(files[0], transactionId, imageType);
+
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        this.pendingImageUpload = { file, transactionId, imageType };
+        this.confirmationData = {
+          title: 'ยืนยันการอัปโหลดรูปภาพ',
+          message: 'คุณต้องการอัปโหลดรูปภาพนี้ใช่หรือไม่? หากมีรูปภาพเดิมอยู่แล้ว จะถูกเขียนทับ',
+          confirmText: 'อัปโหลด',
+          cancelText: 'ยกเลิก',
+          action: 'upload-back-image',
+          confirmationType: 'confirm',
+        };
+        this.showConfirmation = true;
+        this.cdr.detectChanges();
+      } else {
+        this.toastService.error('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+      }
     }
-    this.cdr.detectChanges();
   }
 
-  selectBackImageFile(transactionId: string, imageType: 'backUrl1' | 'backUrl2'): void {
-    const fileInput = document.getElementById(`back-file-input-${transactionId}-${imageType}`) as HTMLInputElement;
-    if (fileInput) {
-      fileInput.click();
+  selectBackImageFile(transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): void {
+    const fileInput = document.getElementById(`back-file-input-${transactionId}-${imageType}`);
+    fileInput?.click();
+  }
+
+  onBackImageFileSelected(event: Event, transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.pendingImageUpload = { file, transactionId, imageType };
+      this.confirmationData = {
+        title: 'ยืนยันการอัปโหลดรูปภาพ',
+        message: 'คุณต้องการอัปโหลดรูปภาพนี้ใช่หรือไม่? หากมีรูปภาพเดิมอยู่แล้ว จะถูกเขียนทับ',
+        confirmText: 'อัปโหลด',
+        cancelText: 'ยกเลิก',
+        action: 'upload-back-image',
+        confirmationType: 'confirm',
+      };
+      this.showConfirmation = true;
+      this.cdr.detectChanges();
+      input.value = '';
     }
   }
 
-  onBackImageFileSelected(event: Event, transactionId: string, imageType: 'backUrl1' | 'backUrl2'): void {
-    const target = event.target as HTMLInputElement;
-    const files = target.files;
-    if (files && files.length > 0) {
-      this.uploadBackImage(files[0], transactionId, imageType);
-    }
-  }
 
-  removeBackImage(event: Event, transactionId: string, imageType: 'backUrl1' | 'backUrl2'): void {
+  removeBackImage(event: Event, transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): void {
     event.stopPropagation();
     const currentImages = this.uploadedBackImages.get(transactionId) || {};
     delete currentImages[imageType];
@@ -716,8 +750,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  getBackImageUrl(transactionId: string, imageType: 'backUrl1' | 'backUrl2'): string | undefined {
-    return this.uploadedBackImages.get(transactionId)?.[imageType];
+  getBackImageUrl(transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): string | undefined {
+    const uploadedImage = this.uploadedBackImages.get(transactionId)?.[imageType];
+    if (uploadedImage === 'uploaded') {
+      return 'uploaded';
+    }
+    return uploadedImage;
   }
 
   shouldShowBackImageUpload(): boolean {
@@ -728,24 +766,29 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   getAttachedImages(): Array<{ url?: string; label: string; type: 'bill' | 'back1' | 'back2' }> {
     if (!this.selectedTransaction) return [];
 
+    const uploadedBill = this.getBackImageUrl(this.selectedTransaction.transactionId, 'billUrl');
+    const uploadedBack1 = this.getBackImageUrl(this.selectedTransaction.transactionId, 'backUrl1');
+    const uploadedBack2 = this.getBackImageUrl(this.selectedTransaction.transactionId, 'backUrl2');
+
     return [
       {
-        url: this.selectedTransaction.BillURL || undefined,
-        label: 'สลิปการโอนเงิน',
+        url: this.selectedTransaction.BillURL || (uploadedBill === 'uploaded' ? this.placeholderImage() : uploadedBill),
+        label: 'รูปภาพที่ 1',
         type: 'bill'
       },
       {
-        url: this.selectedTransaction.BackURL1 || this.getBackImageUrl(this.selectedTransaction.transactionId, 'backUrl1'),
-        label: 'รูปภาพที่ 1',
+        url: this.selectedTransaction.BackURL1 || (uploadedBack1 === 'uploaded' ? this.placeholderImage() : uploadedBack1),
+        label: 'รูปภาพที่ 2',
         type: 'back1'
       },
       {
-        url: this.selectedTransaction.BackURL2 || this.getBackImageUrl(this.selectedTransaction.transactionId, 'backUrl2'),
-        label: 'รูปภาพที่ 2',
+        url: this.selectedTransaction.BackURL2 || (uploadedBack2 === 'uploaded' ? this.placeholderImage() : uploadedBack2),
+        label: 'รูปภาพที่ 3',
         type: 'back2'
       }
     ];
   }
+
 
   isTransactionSelected(transactionId: string): boolean {
     return this.selectedTransactionIds.has(transactionId);
@@ -1082,56 +1125,92 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     return `${index}-${image.label}`;
   }
 
-  private uploadBackImage(file: File, transactionId: string, imageType: 'backUrl1' | 'backUrl2'): void {
+  private convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+      const maxSize = 16 * 1024 * 1024;
+
+      if (!allowedTypes.includes(file.type)) {
+        reject(new Error('ไฟล์ต้องเป็นรูปภาพ (JPG, PNG, GIF)'));
+        return;
+      }
+
+      if (file.size > maxSize) {
+        reject(new Error('ไฟล์ใหญ่เกินไป (สูงสุด 16MB)'));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (reader.result) {
+          resolve(reader.result as string);
+        } else {
+          reject(new Error('ไม่สามารถอ่านไฟล์ได้'));
+        }
+      };
+      reader.onerror = () => reject(new Error('เกิดข้อผิดพลาดในการอ่านไฟล์'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private uploadBackImage(file: File, transactionId: string, imageType: 'billUrl' | 'backUrl1' | 'backUrl2'): void {
     this.isUploadingBackImage = `${transactionId}-${imageType}`;
     this.cdr.detectChanges();
 
-    this.transactionService.uploadImage(file)
-      .pipe(
-        finalize(() => {
-          this.isUploadingBackImage = null;
-          this.cdr.detectChanges();
-        })
-      )
-      .subscribe({
-        next: (response) => {
-          if (response.success && response.data?.display_url) {
-            const currentImages = this.uploadedBackImages.get(transactionId) || {};
-            currentImages[imageType] = response.data.display_url;
-            this.uploadedBackImages.set(transactionId, currentImages);
+    this.convertFileToBase64(file)
+      .then((base64String) => {
+        const request = {
+          transactionId: transactionId,
+          [imageType]: base64String
+        };
 
-            this.adminService.uploadBackImage({
-              transactionId,
-              [imageType]: response.data.display_url
-            }).subscribe({
-              next: (uploadResponse) => {
-                if (uploadResponse.status === 'success') {
-                  this.confirmationData = {
-                    title: 'อัปโหลดสำเร็จ',
-                    message: `อัปโหลด${imageType === 'backUrl1' ? 'รูปภาพที่ 1' : 'รูปภาพที่ 2'}สำเร็จแล้ว ต้องการดำเนินการอื่นๆ หรือไม่?`,
-                    confirmText: 'รีเฟรชข้อมูล',
-                    cancelText: 'ปิด',
-                    action: 'refresh',
-                    confirmationType: 'confirm'
-                  };
-                  this.showConfirmation = true;
-                  this.toastService.success('อัปโหลดสำเร็จ', 'อัปโหลดรูปภาพเสร็จสิ้น');
-                  this.cdr.detectChanges();
-                } else {
-                  this.toastService.error('อัปโหลดไม่สำเร็จ', uploadResponse.message);
+        this.adminService.uploadBackImage(request).subscribe({
+          next: (response: any) => {
+            if (response.status === 'success') {
+              const currentImages = this.uploadedBackImages.get(transactionId) || {};
+              currentImages[imageType] = base64String;
+              this.uploadedBackImages.set(transactionId, currentImages);
+
+              this.toastService.success('อัปโหลดสำเร็จ', response.message);
+              const keyMap = {
+                billUrl: 'BillURL',
+                backUrl1: 'BackURL1',
+                backUrl2: 'BackURL2'
+              };
+              const keyToUpdate = keyMap[imageType] as 'BillURL' | 'BackURL1' | 'BackURL2';
+
+              if (keyToUpdate) {
+                if (this.selectedTransaction && this.selectedTransaction.transactionId === transactionId) {
+                  this.selectedTransaction[keyToUpdate] = base64String;
                 }
-              },
-              error: (error) => {
-                this.toastService.error('เกิดข้อผิดพลาด', error.message);
+
+                const transactionInList = this.allTransactions.find(t => t.transactionId === transactionId);
+                if (transactionInList) {
+                  transactionInList[keyToUpdate] = base64String;
+                }
               }
-            });
+            } else {
+              this.toastService.error('อัปโหลดไม่สำเร็จ', response.message);
+            }
+          },
+          error: (error: any) => {
+            this.toastService.error('เกิดข้อผิดพลาด', error.message || 'ไม่สามารถอัปโหลดได้');
+          },
+          complete: () => {
+            this.isUploadingBackImage = null;
+            this.isProcessing = null;
+            this.cdr.detectChanges();
           }
-        },
-        error: (error) => {
-          this.toastService.error('อัปโหลดไม่สำเร็จ', error.message);
-        }
+        });
+      })
+      .catch((error: any) => {
+        this.toastService.error('เกิดข้อผิดพลาด', error.message || 'ไม่สามารถแปลงไฟล์ได้');
+        this.isUploadingBackImage = null;
+        this.isProcessing = null;
+        this.cdr.detectChanges();
       });
   }
+
 
   private setupErrorHandling(): void {
     window.addEventListener('unhandledrejection', this.handleUnhandledError);
@@ -1806,5 +1885,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   hasTaxData(transaction: AdminTransaction): boolean {
     return !!(transaction.TaxInName || transaction.Tax_Name || transaction.TaxIDNo);
+  }
+
+  private placeholderImage(): string {
+    return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmMGY5ZmYiLz48dGV4dCB4PSI1MCIgeT0iNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzM0ODdhOSI+QXVwZGF0ZWQ8L3RleHQ+PC9zdmc+';
   }
 }

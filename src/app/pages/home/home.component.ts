@@ -454,34 +454,23 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleFileUpload(file: File, transactionId: string): void {
+  async handleFileUpload(file: File, transactionId: string): Promise<void> {
     if (!this.validateFile(file)) return;
 
     this.isUploading = transactionId;
     this.cdr.detectChanges();
 
-    this.transactionService.uploadImage(file)
-      .pipe(
-        finalize(() => {
-          this.isUploading = null;
-          this.cdr.detectChanges();
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.uploadedImages.set(transactionId, response.data.display_url);
-            this.toastService.success('อัปโหลดสำเร็จ', 'ไฟล์ถูกอัปโหลดเรียบร้อยแล้ว');
-          } else {
-            this.toastService.error('อัปโหลดไม่สำเร็จ', 'ไม่สามารถอัปโหลดไฟล์ได้');
-          }
-        },
-        error: (error) => {
-          this.toastService.error('อัปโหลดไม่สำเร็จ', 'เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
-          console.error('Upload error:', error);
-        }
-      });
+    try {
+      const base64String = await this.transactionService.convertFileToBase64(file);
+      this.uploadedImages.set(transactionId, base64String);
+      this.toastService.success('อัปโหลดสำเร็จ', 'ไฟล์ถูกเลือกเรียบร้อยแล้ว');
+    } catch (error) {
+      this.toastService.error('เลือกไฟล์ไม่สำเร็จ', 'เกิดข้อผิดพลาดในการประมวลผลไฟล์');
+      console.error('File conversion error:', error);
+    } finally {
+      this.isUploading = null;
+      this.cdr.detectChanges();
+    }
   }
 
   removeUploadedImage(event: Event, transactionId: string): void {
@@ -514,6 +503,9 @@ export class HomeComponent implements OnInit, OnDestroy {
             if (response.taxInvoiceId) {
               successMessage += ` และได้บันทึกข้อมูลใบกำกับภาษีเลขที่ ${response.taxInvoiceId}`;
             }
+            if (response.ImageUrl) {
+              successMessage += ' สลิปได้ถูกบันทึกในระบบแล้ว';
+            }
             this.toastService.success('ชำระเงินสำเร็จ', successMessage);
             this.seatService.invalidateCache();
             this.transactionService.invalidateCache();
@@ -530,7 +522,7 @@ export class HomeComponent implements OnInit, OnDestroy {
               transactionId: currentResult.transactionId || '',
               totalAmount: currentResult.totalPrice || 0,
               Status: 2,
-              BillURL: paymentData.billUrl,
+              BillURL: response.ImageUrl || paymentData.billUrl,
               seats_data: seatsData
             };
 

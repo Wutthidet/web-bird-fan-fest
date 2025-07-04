@@ -261,7 +261,8 @@
               [maxlength]="idType === 'citizen' ? 13 : 20"
               [pattern]="idType === 'citizen' ? '[0-9]{13}' : '[A-Za-z0-9]+'"
               [disabled]="isLoading" class="form-input">
-            <label for="idenNumber" class="form-label">{{ getIdLabel() }}</label>
+            <label for="idenNumber" class="form-label">{{ getIdLabel()
+              }}</label>
             <div class="form-icon">
               <svg *ngIf="idType === 'citizen'" width="20" height="20"
                 viewBox="0 0 24 24" fill="none"
@@ -414,7 +415,8 @@
             <span class="timer-text">{{ formatTime(otpTimeLeft) }}</span>
           </div>
 
-          <div *ngIf="otpTimeLeft <= 0" class="timer-display expired">
+          <div *ngIf="otpTimeLeft <= 0 && !loginSuccessful"
+            class="timer-display expired">
             <div class="timer-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                 xmlns="http://www.w3.org/2000/svg">

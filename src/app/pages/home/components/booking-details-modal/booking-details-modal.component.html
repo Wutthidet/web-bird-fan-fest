@@ -331,7 +331,7 @@
                     (dragleave)="onDragLeave($event)"
                     (drop)="onDrop($event, transactionId)"
                     (click)="selectFile(transactionId)">
-                    <div *ngIf="!getUploadedImage(transactionId)"
+                    <div *ngIf="!getUploadedImagePreview(transactionId)"
                       class="upload-placeholder">
                       <svg width="32" height="32" viewBox="0 0 24 24"
                         fill="none"
@@ -354,9 +354,9 @@
                       <span>รองรับ JPG, PNG, GIF (สูงสุด 16MB)</span>
                     </div>
 
-                    <div *ngIf="getUploadedImage(transactionId)"
+                    <div *ngIf="getUploadedImagePreview(transactionId)"
                       class="uploaded-image">
-                      <img [src]="getUploadedImage(transactionId)"
+                      <img [src]="getUploadedImagePreview(transactionId)"
                         alt="สลิปที่อัปโหลด">
                       <button class="remove-image"
                         (click)="onRemoveUploadedImage($event, transactionId)">
@@ -373,7 +373,7 @@
                     <div *ngIf="isUploading === transactionId"
                       class="uploading-overlay">
                       <div class="upload-spinner"></div>
-                      <p>กำลังอัปโหลด...</p>
+                      <p>กำลังประมวลผล...</p>
                     </div>
                   </div>
                   <input type="file" [id]="'file-input-' + transactionId"
@@ -399,7 +399,7 @@
                   </button>
 
                   <button class="pay-btn"
-                    [disabled]="!getUploadedImage(transactionId) || isProcessing === transactionId"
+                    [disabled]="!getUploadedImagePreview(transactionId) || isProcessing === transactionId"
                     (click)="onPayTransaction(transactionId)">
                     <svg *ngIf="isProcessing !== transactionId" width="16"
                       height="16" viewBox="0 0 24 24" fill="none">

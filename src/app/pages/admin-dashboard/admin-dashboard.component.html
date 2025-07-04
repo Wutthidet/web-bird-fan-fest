@@ -1562,22 +1562,37 @@
         <div class="attached-images-grid">
           <div *ngFor="let image of getAttachedImages(); trackBy: trackByImage"
             class="image-item">
-            <div class="image-label">{{ image.label }}</div>
+            <div class="image-label">
+              <span>{{ image.label }}</span>
+              <button class="upload-replace-btn"
+                (click)="selectBackImageFile(selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
+                *ngIf="shouldShowBackImageUpload()"
+                title="อัปโหลดรูปใหม่">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>เปลี่ยนรูป</span>
+              </button>
+            </div>
             <div class="image-container">
               <img *ngIf="image.url" [src]="image.url" [alt]="image.label"
                 class="attached-image"
                 (click)="openImageViewer(image.url, image.label)">
               <div
-                *ngIf="!image.url && shouldShowBackImageUpload() && (image.type === 'back1' || image.type === 'back2')"
+                *ngIf="!image.url && shouldShowBackImageUpload()"
                 class="back-image-upload-area"
-                [class.dragover]="dragoverBackImage === selectedTransaction!.transactionId + '-' + (image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
-                (dragover)="onBackImageDragOver($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                [class.dragover]="dragoverBackImage === selectedTransaction!.transactionId + '-' + (image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
+                (dragover)="onBackImageDragOver($event, selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
                 (dragleave)="onBackImageDragLeave($event)"
-                (drop)="onBackImageDrop($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
-                (click)="selectBackImageFile(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')">
+                (drop)="onBackImageDrop($event, selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
+                (click)="selectBackImageFile(selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))">
 
                 <div
-                  *ngIf="!getBackImageUrl(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                  *ngIf="!getBackImageUrl(selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
                   class="upload-placeholder">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                     <path
@@ -1597,10 +1612,10 @@
                   *ngIf="getBackImageUrl(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
                   class="uploaded-back-image">
                   <img
-                    [src]="getBackImageUrl(selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                    [src]="getBackImageUrl(selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
                     [alt]="image.label">
                   <button class="remove-back-image"
-                    (click)="removeBackImage($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')">
+                    (click)="removeBackImage($event, selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor"
                         stroke-width="2" />
@@ -1611,16 +1626,11 @@
                 </div>
 
                 <div
-                  *ngIf="isUploadingBackImage === selectedTransaction!.transactionId + '-' + (image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
+                  *ngIf="isUploadingBackImage === selectedTransaction!.transactionId + '-' + (image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
                   class="uploading-overlay">
                   <div class="upload-spinner"></div>
                   <p>กำลังอัปโหลด...</p>
                 </div>
-
-                <input type="file"
-                  [id]="'back-file-input-' + selectedTransaction!.transactionId + '-' + (image.type === 'back1' ? 'backUrl1' : 'backUrl2')"
-                  accept="image/*" style="display: none"
-                  (change)="onBackImageFileSelected($event, selectedTransaction!.transactionId, image.type === 'back1' ? 'backUrl1' : 'backUrl2')">
               </div>
               <div *ngIf="!image.url && !shouldShowBackImageUpload()"
                 class="no-image-placeholder">
@@ -1635,6 +1645,11 @@
                 <span>ไม่มีรูป</span>
               </div>
             </div>
+            <input type="file"
+              *ngIf="shouldShowBackImageUpload()"
+              [id]="'back-file-input-' + selectedTransaction!.transactionId + '-' + (image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))"
+              accept="image/*" style="display: none"
+              (change)="onBackImageFileSelected($event, selectedTransaction!.transactionId, image.type === 'bill' ? 'billUrl' : (image.type === 'back1' ? 'backUrl1' : 'backUrl2'))">
           </div>
         </div>
       </div>
@@ -1744,7 +1759,8 @@
       </button>
     </div>
     <div class="image-viewer-content">
-      <img [src]="viewerImageUrl" [alt]="viewerImageLabel" class="viewer-image">
+      <img [src]="viewerImageUrl" [alt]="viewerImageLabel"
+        class="viewer-image">
     </div>
   </div>
 </div>

@@ -77,6 +77,7 @@ export class LoginComponent implements OnDestroy {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  loginSuccessful = false;
 
   timerState: TimerState = {
     timeLeft: 0,
@@ -307,6 +308,7 @@ export class LoginComponent implements OnDestroy {
               ? 'สมัครสมาชิกและเข้าสู่ระบบสำเร็จ!'
               : 'เข้าสู่ระบบสำเร็จ!';
 
+            this.loginSuccessful = true;
             this.showSuccessMessage(successMessage);
             this.stopOtpTimer();
 
@@ -347,6 +349,7 @@ export class LoginComponent implements OnDestroy {
   backToForm(): void {
     this.otpSent = false;
     this.otp = '';
+    this.loginSuccessful = false;
     this.clearMessages();
     this.stopOtpTimer();
     this.cdr.detectChanges();
@@ -364,6 +367,7 @@ export class LoginComponent implements OnDestroy {
     this.idType = 'citizen';
     this.otpSent = false;
     this.isLoading = false;
+    this.loginSuccessful = false;
     this.clearMessages();
     this.stopOtpTimer();
   }
@@ -472,10 +476,6 @@ export class LoginComponent implements OnDestroy {
       errors.push('กรุณากรอกรหัส OTP');
     } else if (!this.validationRules.otp.test(otp)) {
       errors.push('รหัส OTP ต้องเป็นตัวเลข 6 หลัก');
-    }
-
-    if (this.timerState.timeLeft <= 0 && !this.timerState.canResend) {
-      errors.push('รหัส OTP หมดอายุแล้ว กรุณาขอรหัสใหม่');
     }
 
     return { isValid: errors.length === 0, errors };
