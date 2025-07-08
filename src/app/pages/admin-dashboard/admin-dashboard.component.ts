@@ -14,6 +14,7 @@ import { ErrorBoundaryComponent } from './components/error-boundary/error-bounda
 import { SkeletonCardComponent } from './components/skeleton-card/skeleton-card.component';
 import { SkeletonTableComponent } from './components/skeleton-table/skeleton-table.component';
 import { ZoneStatsCardsComponent } from './components/zone-stats/zone-stats-cards.component';
+import { BookingDetailsModalComponent } from '../../pages/home/components/booking-details-modal/booking-details-modal.component';
 
 interface StatusFilter {
   status: number;
@@ -95,7 +96,8 @@ interface ErrorStates {
     ErrorBoundaryComponent,
     SkeletonCardComponent,
     SkeletonTableComponent,
-    ZoneStatsCardsComponent
+    ZoneStatsCardsComponent,
+    BookingDetailsModalComponent
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.scss',
@@ -246,6 +248,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   public selectedTransaction: AdminTransaction | null = null;
   public showSeatLogDetailsModal = false;
   public selectedSeatLog: SeatLog | null = null;
+  public showBookingUpdateModal = false;
 
   public expandedGroups: ZoneGroup = {
     inner: false,
@@ -269,6 +272,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   public uploadedBackImages = new Map<string, { billUrl?: string, backUrl1?: string; backUrl2?: string }>();
   public isUploadingBackImage: string | null = null;
   public dragoverBackImage: string | null = null;
+  readonly uploadedImages = new Map<string, string>();
+  public dragover: string | null = null;
 
   constructor(
     private adminService: AdminService,
@@ -658,6 +663,45 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.showSeatLogDetailsModal = false;
     this.selectedSeatLog = null;
     this.cdr.detectChanges();
+  }
+
+  openUpdateModal(transaction: AdminTransaction): void {
+    this.selectedTransaction = transaction;
+    this.showBookingUpdateModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeUpdateModal(): void {
+    this.showBookingUpdateModal = false;
+    this.selectedTransaction = null;
+    this.cdr.detectChanges();
+  }
+
+  handlePayTransaction(paymentData: any): void {
+    this.isProcessing = paymentData.transactionId;
+    this.cdr.detectChanges();
+
+    this.transactionService.payTransaction(paymentData)
+      .pipe(
+        finalize(() => {
+          this.isProcessing = null;
+          this.closeUpdateModal();
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          if (response.status === 'success') {
+            this.toastService.success('อัปเดตสำเร็จ', 'สถานะการจองได้ถูกเปลี่ยนเป็น "รอตรวจสอบ"');
+            this.loadTransactions();
+          } else {
+            this.toastService.error('อัปเดตไม่สำเร็จ', response.message || 'ไม่สามารถอัปเดตข้อมูลได้');
+          }
+        },
+        error: (error) => {
+          this.toastService.error('เกิดข้อผิดพลาด', error.message || 'ไม่สามารถทำรายการได้');
+        }
+      });
   }
 
   openImageViewer(imageUrl: string, imageLabel: string): void {
@@ -1889,5 +1933,47 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   private placeholderImage(): string {
     return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmMGY5ZmYiLz48dGV4dCB4PSI1MCIgeT0iNTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzM0ODdhOSI+QXVwZGF0ZWQ8L3RleHQ+PC9zdmc+';
+  }
+
+  async handleFileUpload(file: File, transactionId: string): Promise<void> {
+    if (!this.validateFile(file)) return;
+
+    this.isProcessing = transactionId;
+    this.cdr.detectChanges();
+
+    try {
+      const base64String = await this.transactionService.convertFileToBase64(file);
+      this.uploadedImages.set(transactionId, base64String);
+      this.toastService.success('อัปโหลดสำเร็จ', 'ไฟล์ถูกเลือกเรียบร้อยแล้ว');
+    } catch (error) {
+      this.toastService.error('เลือกไฟล์ไม่สำเร็จ', 'เกิดข้อผิดพลาดในการประมวลผลไฟล์');
+      console.error('File conversion error:', error);
+    } finally {
+      this.isProcessing = null;
+      this.cdr.detectChanges();
+    }
+  }
+
+  removeUploadedImage(event: Event, transactionId: string): void {
+    event.stopPropagation();
+    this.uploadedImages.delete(transactionId);
+    this.cdr.detectChanges();
+  }
+
+  private validateFile(file: File): boolean {
+    const maxSize = 16 * 1024 * 1024;
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+    if (file.size > maxSize) {
+      this.toastService.error('ไฟล์ใหญ่เกินไป', 'ขนาดไฟล์ต้องไม่เกิน 16MB');
+      return false;
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      this.toastService.error('ประเภทไฟล์ไม่ถูกต้อง', 'รองรับเฉพาะไฟล์ JPG, PNG, GIF');
+      return false;
+    }
+
+    return true;
   }
 }

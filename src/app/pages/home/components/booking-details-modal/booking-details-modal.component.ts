@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ConfirmationModalComponent } from '../../../../shared/components/confirmation/confirmation.component';
 import { BookingTransaction, BookingTransactionSeat } from '../../../../services/transaction.service';
 import { AuthService } from '../../../../services/auth.service';
+import { AdminTransaction } from '../../../../services/admin.service';
 
 interface BookedSeatInfo {
   row: string;
@@ -42,7 +43,7 @@ interface TaxInvoiceForm {
   useExistingData: boolean;
 }
 
-type ModalData = BookingResult | BookingTransaction;
+type ModalData = BookingResult | BookingTransaction | AdminTransaction;
 type ModalMode = 'result' | 'details';
 
 @Component({
@@ -284,13 +285,19 @@ export class BookingDetailsModalComponent implements OnInit, OnDestroy, OnChange
   getModalTransactionId = (): string | undefined => this.data?.transactionId;
   getModalStatus = (): 1 | 2 | 3 | undefined => (this.data as BookingTransaction)?.Status;
   getModalZone = (): string | undefined => (this.data as BookingResult)?.zone;
-  getModalTotalAmount = (): number | undefined => (this.data as BookingResult)?.totalPrice ?? (this.data as BookingTransaction)?.totalAmount;
+  getModalTotalAmount = (): number | undefined => {
+    if (!this.data) return undefined;
+    if ('totalPrice' in this.data) return (this.data as BookingResult).totalPrice;
+    if ('totalAmount' in this.data) return (this.data as BookingTransaction).totalAmount;
+    if ('TotalAmount' in this.data) return (this.data as AdminTransaction).TotalAmount;
+    return undefined;
+  };
   getModalMessage = (): string | undefined => (this.data as BookingResult)?.message;
   getModalBookedSeats = (): BookedSeatInfo[] | undefined => (this.data as BookingResult)?.bookedSeats;
   getModalFailedSeats = (): FailedSeatInfo[] | undefined => (this.data as BookingResult)?.failedSeats;
   getModalSeatsData = (): BookingTransactionSeat[] | undefined => {
-    if (this.isDetailsMode() && this.data) {
-      return (this.data as BookingTransaction)?.seats_data;
+    if (this.isDetailsMode() && this.data && 'seats_data' in this.data) {
+      return (this.data as BookingTransaction | AdminTransaction).seats_data;
     }
     return undefined;
   };

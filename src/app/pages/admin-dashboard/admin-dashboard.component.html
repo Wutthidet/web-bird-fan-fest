@@ -830,6 +830,18 @@
                         </svg>
                       </button>
 
+                      <button *ngIf="transaction.Status === 1"
+                        class="modern-action-btn update-btn"
+                        (click)="openUpdateModal(transaction)"
+                        title="อัปเดตการชำระเงิน">
+                        <svg width="16" height="16" viewBox="0 0 24 24"
+                          fill="none">
+                          <polyline points="20,6 9,17 4,12"
+                            stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                      </button>
+
                       <button *ngIf="transaction.Status === 2"
                         class="modern-action-btn approve-btn"
                         (click)="approveTransaction(transaction.transactionId)"
@@ -1280,7 +1292,8 @@
                       <div class="zones-list">
                         <span *ngFor="let seat of log.seats_data.slice(0, 3)"
                           class="zone-tag">
-                          {{ seat.zone }}{{ seat.row }}{{ seat.column }}
+                          {{ seat.zone }}{{ seat.row }}{{ seat.display ||
+                          seat.column }}
                         </span>
                         <span *ngIf="log.seats_data.length > 3"
                           class="more-zones">
@@ -1734,7 +1747,7 @@
             </div>
             <div class="seat-details">
               <div class="seat-location">{{ seat.zone }}{{ seat.row }}{{
-                seat.column }}</div>
+                seat.display || seat.column }}</div>
               <div class="seat-level">Level {{ seat.level }}</div>
             </div>
           </div>
@@ -1788,3 +1801,16 @@
   (cancelled)="onConfirmationCancelled()"
   (closed)="onConfirmationCancelled()">
 </app-confirmation>
+
+<app-booking-details-modal
+  [show]="showBookingUpdateModal"
+  [mode]="'details'"
+  [data]="selectedTransaction"
+  [uploadedImages]="uploadedImages"
+  [isProcessing]="isProcessing?.toString() ?? null"
+  [dragover]="dragover"
+  (close)="closeUpdateModal()"
+  (fileUpload)="handleFileUpload($event.file, $event.transactionId)"
+  (removeImage)="removeUploadedImage($event.event, $event.transactionId)"
+  (payTransaction)="handlePayTransaction($event)">
+</app-booking-details-modal>

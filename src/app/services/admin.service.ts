@@ -103,6 +103,7 @@ export interface SeatLog {
     zone: string;
     row: string;
     column: number;
+    display: string | null;
   }[];
 }
 
